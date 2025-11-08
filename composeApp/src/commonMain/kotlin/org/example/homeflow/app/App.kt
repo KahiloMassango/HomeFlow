@@ -17,13 +17,14 @@ import org.example.homeflow.core.ui.components.HomeFlowButton
 import org.example.homeflow.core.ui.components.HomeFlowOutlinedButton
 import org.example.homeflow.core.ui.theme.HomeFlowTheme
 import org.example.homeflow.feature.authentication.LoginScreen
+import org.example.homeflow.feature.home.HomeScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
     HomeFlowTheme {
-        LoginScreen()
+        HomeScreen()
     }
 }
 

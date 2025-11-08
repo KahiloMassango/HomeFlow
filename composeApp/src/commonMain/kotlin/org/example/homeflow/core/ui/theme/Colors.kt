@@ -8,10 +8,10 @@ val OnPrimary = Color(0xFFFFFFFF)
 val PrimaryContainer = Color(0xFFE8DEFF)
 val OnPrimaryContainer = Color(0xFF2B0080)
 
-val Secondary = Color(0xFF4D6357)
+val Secondary = Color(0xFFffffff)
 val OnSecondary = Color(0xFFFFFFFF)
-val SecondaryContainer = Color(0xFFCFE9D9)
-val OnSecondaryContainer = Color(0xFF092016)
+val SecondaryContainer = Color(0xFFffffff)
+val OnSecondaryContainer = Color(0xFF191c30)
 
 val Tertiary = Color(0xFF3D6373)
 val OnTertiary = Color(0xFFFFFFFF)
