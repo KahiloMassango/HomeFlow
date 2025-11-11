@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeHotReload)
+    kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -14,7 +16,9 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
+    jvm()
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -32,7 +36,8 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.material.icons)
-
+            implementation(libs.compose.navigation)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -44,6 +49,10 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutinesSwing)
         }
     }
 }
@@ -79,3 +88,14 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+compose.desktop {
+    application {
+        mainClass = "org.example.homeflow.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "org.example.homeflow.app"
+            packageVersion = "1.0.0"
+        }
+    }
+}

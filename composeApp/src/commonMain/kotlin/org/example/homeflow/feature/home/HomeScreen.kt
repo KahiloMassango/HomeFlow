@@ -17,7 +17,9 @@ import org.example.homeflow.feature.home.components.HouseholdCard
 import org.example.homeflow.feature.home.components.JoinHouseholdBottomSheet
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onHouseholdClick: (String) -> Unit,
+) {
 
     var showCreateSheet by remember { mutableStateOf(false) }
     var showJoinSheet by remember { mutableStateOf(false) }
@@ -27,7 +29,7 @@ fun HomeScreen() {
             HouseholdItem("Family Home", 4, 12),
             HouseholdItem("Apartment 4B", 2, 5)
         ),
-        onHouseholdClick = { /* navigate */ },
+        onHouseholdClick = { id -> onHouseholdClick(id) },
         onCreateNew = { showCreateSheet = true },
         onJoinInvite = { showJoinSheet = true }
     )
@@ -56,7 +58,7 @@ fun HomeScreen() {
 private fun HomeScreenContent(
     username: String = "John Doe",
     households: List<HouseholdItem>,
-    onHouseholdClick: (HouseholdItem) -> Unit,
+    onHouseholdClick: (String) -> Unit,
     onCreateNew: () -> Unit,
     onJoinInvite: () -> Unit
 ) {
@@ -79,7 +81,7 @@ private fun HomeScreenContent(
                     HouseholdCard(
                         modifier = Modifier.padding(top = 16.dp),
                         household = item,
-                        onClick = {  }
+                        onClick = { onHouseholdClick("") }
                     )
                 }
 
