@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.homeflow.core.model.HouseholdItem
+import org.example.homeflow.core.model.House
 import org.example.homeflow.core.ui.components.HomeFlowButton
 import org.example.homeflow.core.ui.components.HomeFlowOutlinedButton
 import org.example.homeflow.feature.home.components.CreateHouseholdBottomSheet
@@ -18,36 +18,43 @@ import org.example.homeflow.feature.home.components.JoinHouseholdBottomSheet
 
 @Composable
 fun HomeScreen(
-    onHouseholdClick: (String) -> Unit,
+    viewModel: HomeViewModel,
+    onHouseClick: (String) -> Unit,
 ) {
+
+    val uiState by viewModel.uiState.collectAsState()
+    val houses by viewModel.houses.collectAsState()
 
     var showCreateSheet by remember { mutableStateOf(false) }
     var showJoinSheet by remember { mutableStateOf(false) }
 
     HomeScreenContent(
-        households = listOf(
-            HouseholdItem("Family Home", 4, 12),
-            HouseholdItem("Apartment 4B", 2, 5)
-        ),
-        onHouseholdClick = { id -> onHouseholdClick(id) },
+        houses = houses,
+        onHouseClick = { id -> onHouseClick(id) },
         onCreateNew = { showCreateSheet = true },
         onJoinInvite = { showJoinSheet = true }
     )
 
+
     if (showCreateSheet) {
         CreateHouseholdBottomSheet(
-            onDismiss = { showCreateSheet = false },
+            isLoading = uiState.isLoading,
+            onDismiss = {
+                viewModel.clearHouseCode()
+                showCreateSheet = false
+            },
             onCreate = { name ->
-                // Handle create household
+                viewModel.createHouse(name)
                 showCreateSheet = false
             }
         )
     }
     if (showJoinSheet) {
-       JoinHouseholdBottomSheet(
+        JoinHouseholdBottomSheet(
+            isLoading = uiState.isLoading,
             onDismiss = { showJoinSheet = false },
             onJoin = { code ->
-                // Handle create household
+                viewModel.joinHouse(code)
                 showJoinSheet = false
             }
         )
@@ -57,8 +64,8 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     username: String = "John Doe",
-    households: List<HouseholdItem>,
-    onHouseholdClick: (String) -> Unit,
+    houses: List<House>,
+    onHouseClick: (String) -> Unit,
     onCreateNew: () -> Unit,
     onJoinInvite: () -> Unit
 ) {
@@ -66,22 +73,22 @@ private fun HomeScreenContent(
     Scaffold(
         topBar = { HomeTopBar(username = username) }
     ) { paddingValues ->
-        Surface (
+        Surface(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
             color = MaterialTheme.colorScheme.surface,
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxSize()
             ) {
-                households.forEach { item ->
+                houses.forEach { house ->
                     HouseholdCard(
                         modifier = Modifier.padding(top = 16.dp),
-                        household = item,
-                        onClick = { onHouseholdClick("") }
+                        house = house,
+                        onClick = { id -> onHouseClick(id) }
                     )
                 }
 

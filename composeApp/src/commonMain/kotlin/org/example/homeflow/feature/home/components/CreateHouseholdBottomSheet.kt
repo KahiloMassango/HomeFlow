@@ -21,6 +21,7 @@ import org.example.homeflow.core.ui.components.HomeFlowButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateHouseholdBottomSheet(
+    isLoading: Boolean,
     onDismiss: () -> Unit,
     onCreate: (String) -> Unit
 ) {
@@ -42,7 +43,7 @@ fun CreateHouseholdBottomSheet(
             // Header Row
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Create Household",
+                    "Create House",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -78,10 +79,14 @@ fun CreateHouseholdBottomSheet(
 
             HomeFlowButton(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = name.isNotBlank(),
+                enabled = !isLoading && name.isNotEmpty(),
                 onClick = { onCreate(name) },
             ) {
-                Text("Create Household")
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text("Create a House")
+                }
             }
 
         }

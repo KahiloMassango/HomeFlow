@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.household.components
+package org.example.homeflow.feature.house.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -63,7 +63,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = task.dueDate,
+                        text = task.dueDate.toString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = task.category.color,
                         fontSize = 12.sp

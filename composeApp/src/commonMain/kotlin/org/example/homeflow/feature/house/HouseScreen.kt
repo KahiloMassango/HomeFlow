@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.household
+package org.example.homeflow.feature.house
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -6,29 +6,36 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.homeflow.core.model.tasks
-import org.example.homeflow.feature.household.components.HouseholdTopBar
-import org.example.homeflow.feature.household.components.TaskCard
-import org.example.homeflow.feature.household.components.TaskFilter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.example.homeflow.feature.house.components.HouseTopBar
+import org.example.homeflow.feature.house.components.TaskCard
+import org.example.homeflow.feature.house.components.TaskFilter
 
 @Composable
-fun HouseholdScreen(
+fun HouseScreen(
+    viewModel: HouseViewModel,
     onAddTask: (String) -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val tasks by viewModel.tasks.collectAsState()
 
     var filter by rememberSaveable { mutableStateOf("1") }
 
+    if(uiState.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+
     Scaffold(
         topBar = {
-            HouseholdTopBar(houseName = "Family Home")
+            HouseTopBar(houseName = "Family Home")
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -56,7 +63,6 @@ fun HouseholdScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
-
                 // Stats row
                 TaskFilter(
                     filter = filter,
@@ -75,6 +81,7 @@ fun HouseholdScreen(
                 }
             }
         }
+    }
     }
 }
 

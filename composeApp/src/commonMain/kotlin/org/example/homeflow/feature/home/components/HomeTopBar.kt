@@ -43,15 +43,10 @@ fun HomeTopBar(
             }
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "Your Households",
+                text = "Your Houses",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                "Select or create a household",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
             )
             Spacer(Modifier.height(8.dp))
         }

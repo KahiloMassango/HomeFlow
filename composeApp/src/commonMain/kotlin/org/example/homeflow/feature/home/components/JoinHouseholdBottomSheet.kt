@@ -19,6 +19,7 @@ import org.example.homeflow.core.ui.components.HomeFlowButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinHouseholdBottomSheet(
+    isLoading: Boolean,
     onDismiss: () -> Unit,
     onJoin: (String) -> Unit
 ) {
@@ -40,7 +41,7 @@ fun JoinHouseholdBottomSheet(
             // Header Row
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Join Household",
+                    "Join House",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -69,17 +70,21 @@ fun JoinHouseholdBottomSheet(
                 modifier = Modifier,
                 icon = Icons.Outlined.Info,
                 title = "Private & Secure",
-                description = "Ask a household member for the invite code"
+                description = "Ask a house member for the invite code"
             )
 
             Spacer(Modifier.height(30.dp))
 
             HomeFlowButton(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = code.isNotBlank(),
+                enabled = !isLoading && code.isNotEmpty(),
                 onClick = { onJoin(code) },
             ) {
-                Text("Create Household")
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text("Join House")
+                }
             }
 
         }

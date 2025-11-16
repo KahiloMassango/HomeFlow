@@ -28,8 +28,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
+        val koin_version = "4.1.0"
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -46,6 +47,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            implementation("io.insert-koin:koin-core:${koin_version}")
+            implementation("io.insert-koin:koin-compose:${koin_version}")
+            implementation("io.insert-koin:koin-compose-viewmodel:${koin_version}")
+            implementation("io.insert-koin:koin-compose-viewmodel-navigation:${koin_version}")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

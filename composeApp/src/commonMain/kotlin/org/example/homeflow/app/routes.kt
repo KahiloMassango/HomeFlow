@@ -9,7 +9,7 @@ object LoginRoute
 object HomeRoute
 
 @Serializable
-data class AddTaskRoute(val householdId: String)
+data class AddTaskRoute(val houseId: String)
 
 @Serializable
-data class HouseholdDetailRoute(val id: String)
+data class HouseRoute(val id: String)

@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.household.components
+package org.example.homeflow.feature.house.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
