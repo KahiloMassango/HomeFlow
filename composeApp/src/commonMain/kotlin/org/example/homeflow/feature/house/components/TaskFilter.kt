@@ -35,7 +35,7 @@ fun TaskFilter(
             onClick = { onFilterChange("2") })
         StatCard(
             count = "1",
-            label = "In Progress",
+            label = "Done",
             selected = filter == "3",
             modifier = Modifier.weight(1f),
             onClick = { onFilterChange("3") })

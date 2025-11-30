@@ -1,0 +1,41 @@
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.example.homeflow.core.data.repositories.HouseRepository
+import org.example.homeflow.core.model.House
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+class HouseRepositoryImpl(): HouseRepository {
+    private val houses = MutableStateFlow(
+        listOf(House(id = "fsdf",name = "Family Home", members = 4, tasks = 12, code = "pokp"),
+        House(id = "sfdsdf", name = "Apartment 4B", members = 2, tasks = 5, code = "pokm")),
+    )
+
+    @OptIn(ExperimentalUuidApi::class)
+    override suspend fun createHouse(name: String): String {
+        val id = Uuid.random().toString()
+        val house = House(id = id, name = name, members = 0, tasks = 0, code = id.take(6))
+        houses.value += house
+        return id.take(6)
+    }
+
+    override suspend fun deleteHouse(id: String) {
+        houses.value = houses.value.filterNot { it.id == id }
+    }
+
+    override suspend fun joinHouse(code: String, userId: String) {
+        houses.value = houses.value.map { house ->
+            if (house.code == code) house.copy(members = house.members + 1)
+            else house
+        }
+    }
+
+    override fun getHouses(): Flow<List<House>> {
+        return houses
+    }
+
+    override suspend fun getHouseById(id: String): House {
+        return houses.value.single { it.id == id }
+    }
+}

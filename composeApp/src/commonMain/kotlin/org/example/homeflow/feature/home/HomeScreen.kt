@@ -1,6 +1,7 @@
 package org.example.homeflow.feature.home
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,8 +29,22 @@ fun HomeScreen(
     var showCreateSheet by remember { mutableStateOf(false) }
     var showJoinSheet by remember { mutableStateOf(false) }
 
+    LaunchedEffect(uiState) {
+        if (uiState.houseCreated) {
+            showCreateSheet = false
+            viewModel.clearHouseCreatedAndJoined()
+        }
+
+        if (uiState.houseJoined) {
+            showJoinSheet = false
+            viewModel.clearHouseCreatedAndJoined()
+        }
+
+    }
+
     HomeScreenContent(
         houses = houses,
+        isLoading = uiState.isLoading,
         onHouseClick = { id -> onHouseClick(id) },
         onCreateNew = { showCreateSheet = true },
         onJoinInvite = { showJoinSheet = true }
@@ -40,12 +55,11 @@ fun HomeScreen(
         CreateHouseholdBottomSheet(
             isLoading = uiState.isLoading,
             onDismiss = {
-                viewModel.clearHouseCode()
                 showCreateSheet = false
+                viewModel.clearHouseCode()
             },
             onCreate = { name ->
                 viewModel.createHouse(name)
-                showCreateSheet = false
             }
         )
     }
@@ -55,7 +69,6 @@ fun HomeScreen(
             onDismiss = { showJoinSheet = false },
             onJoin = { code ->
                 viewModel.joinHouse(code)
-                showJoinSheet = false
             }
         )
     }
@@ -63,15 +76,15 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    username: String = "John Doe",
     houses: List<House>,
+    isLoading: Boolean,
     onHouseClick: (String) -> Unit,
     onCreateNew: () -> Unit,
     onJoinInvite: () -> Unit
 ) {
 
     Scaffold(
-        topBar = { HomeTopBar(username = username) }
+        topBar = { HomeTopBar() }
     ) { paddingValues ->
         Surface(
             modifier = Modifier
@@ -99,7 +112,7 @@ private fun HomeScreenContent(
                         .fillMaxWidth(),
                     onClick = onCreateNew,
                 ) {
-                    Text("Create New Household")
+                    if (isLoading) CircularProgressIndicator() else Text("Create New Household")
                 }
 
                 Spacer(Modifier.height(14.dp))
@@ -110,7 +123,7 @@ private fun HomeScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Text("Join with Invite Code")
+                    if (isLoading) CircularProgressIndicator() else Text("Join with Invite Code")
                 }
             }
         }

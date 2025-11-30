@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.composeHotReload) apply false
     kotlin("plugin.serialization") version "2.2.0" apply false
+    id("com.google.gms.google-services") version "4.4.4" apply false
 }

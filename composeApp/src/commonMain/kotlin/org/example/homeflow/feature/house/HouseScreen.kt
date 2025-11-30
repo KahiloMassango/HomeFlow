@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.homeflow.feature.house.components.HouseTopBar
 import org.example.homeflow.feature.house.components.TaskCard
 import org.example.homeflow.feature.house.components.TaskFilter
@@ -21,67 +20,72 @@ import org.example.homeflow.feature.house.components.TaskFilter
 fun HouseScreen(
     viewModel: HouseViewModel,
     onAddTask: (String) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val tasks by viewModel.tasks.collectAsState()
 
     var filter by rememberSaveable { mutableStateOf("1") }
 
-    if(uiState.isLoading) {
+    if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
 
-    Scaffold(
-        topBar = {
-            HouseTopBar(houseName = "Family Home")
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAddTask("") },
-                containerColor = Color(0xFF2196F3),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add New Task",
-                    tint = Color.White,
+        Scaffold(
+            topBar = {
+                HouseTopBar(
+                    houseName = uiState.house?.name ?: "",
+                    tasksToComplete = 4,
+                    oNavigateBack = onNavigateBack
                 )
-            }
-        }
-    ) { paddingValues ->
-        Surface(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(24.dp))
-                // Stats row
-                TaskFilter(
-                    filter = filter,
-                    onFilterChange = { filter = it },
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-                // Tasks list
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { onAddTask("") },
+                    containerColor = Color(0xFF2196F3),
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    items(tasks) { task ->
-                        TaskCard(task = task, onClick = {})
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add New Task",
+                        tint = Color.White,
+                    )
+                }
+            }
+        ) { paddingValues ->
+            Surface(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                color = MaterialTheme.colorScheme.surface,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    // Stats row
+                    TaskFilter(
+                        filter = filter,
+                        onFilterChange = { filter = it },
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    // Tasks list
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(tasks) { task ->
+                            TaskCard(task = task, onClick = {})
+                        }
                     }
                 }
             }
         }
-    }
     }
 }
 

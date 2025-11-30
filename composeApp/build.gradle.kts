@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     kotlin("plugin.serialization")
+    id("com.google.gms.google-services")
 }
 
 kotlin {
@@ -39,6 +40,7 @@ kotlin {
             implementation(libs.material.icons)
             implementation(libs.compose.navigation)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "756641327702",
+    "project_id": "homeflow-fee8f",
+    "storage_bucket": "homeflow-fee8f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756641327702:android:3f4109d56b800abe06a9f7",
+        "android_client_info": {
+          "package_name": "org.example.homeflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCalNYHPCcW1TWACIuCdmEAS99muCledSg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

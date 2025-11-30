@@ -1,34 +1,40 @@
 package org.example.homeflow.feature.add_task
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
 import org.example.homeflow.core.ui.components.AppTextField
 import org.example.homeflow.core.ui.components.HomeFlowButton
-import org.example.homeflow.core.ui.components.HomeFlowOutlinedButton
 import org.example.homeflow.feature.add_task.components.CategoryAndPriorityContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskScreen() {
+fun AddTaskScreen(
+    viewModel: AddTaskViewModel,
+    onNavigateBack: () -> Unit,
+) {
+
+    val uiState by viewModel.uiState.collectAsState()
     AddTaskContent(
-        title = "",
-        description = "",
-        category = TaskCategory.Groceries,
-        priority = TaskPriority.Low,
-        onTitleUpdate = {},
-        onDescriptionUpdate = {},
-        onCategoryUpdate = {},
-        onPriorityUpdate = {},
-        onNavigateBack = {}
+        title = uiState.title,
+        description = uiState.description,
+        category = uiState.category,
+        priority = uiState.priority,
+        isLoading = uiState.isLoading,
+        onTitleUpdate = { viewModel.updateTitle(it) },
+        onDescriptionUpdate = { viewModel.updateDescription(it) },
+        onCategoryUpdate = { viewModel.updateCategory(it) },
+        onPriorityUpdate = { viewModel.updatePriority(it) },
+        onAddTask = { viewModel.createTask() },
+        onNavigateBack = onNavigateBack
     )
 }
 
@@ -39,10 +45,12 @@ private fun AddTaskContent(
     description: String,
     category: TaskCategory,
     priority: TaskPriority,
+    isLoading: Boolean,
     onTitleUpdate: (String) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onCategoryUpdate: (TaskCategory) -> Unit,
     onPriorityUpdate: (TaskPriority) -> Unit,
+    onAddTask: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
 
@@ -58,7 +66,7 @@ private fun AddTaskContent(
                         )
                     }
                 },
-                title = { Text("Add Task", color = MaterialTheme.colorScheme.onPrimary) },
+                title = { Text("Add Task $title", color = MaterialTheme.colorScheme.onPrimary) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 )
@@ -102,16 +110,15 @@ private fun AddTaskContent(
                     onCategoryUpdate = onCategoryUpdate,
                     onPriorityUpdate = onPriorityUpdate
                 )
-
                 Spacer(Modifier.height(26.dp))
 
                 // Outline button
                 HomeFlowButton(
-                    onClick = {},
+                    onClick = onAddTask,
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Text("Create Task")
+                    if (isLoading) CircularProgressIndicator() else Text("Create Task")
                 }
 
             }

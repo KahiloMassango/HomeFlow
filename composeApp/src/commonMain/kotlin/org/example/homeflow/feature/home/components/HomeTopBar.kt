@@ -12,9 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeTopBar(
-    username: String
-) {
+fun HomeTopBar() {
 // Top Header
     Box(
         modifier = Modifier
@@ -26,21 +24,10 @@ fun HomeTopBar(
                 .statusBarsPadding()
                 .padding(horizontal = 16.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AvatarCircle(initials = "JD")
-                Spacer(Modifier.width(14.dp))
-                Column {
-                    Text("Welcome back", color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp)
-                    Text(
-                        username,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+
+            Spacer(Modifier.width(14.dp))
+            Text("Welcome back", color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp)
+
             Spacer(Modifier.height(16.dp))
             Text(
                 text = "Your Houses",
