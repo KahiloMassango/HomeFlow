@@ -1,41 +1,195 @@
+package org.example.homeflow.core.data
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.firestore.firestore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
+import kotlinx.serialization.json.Json
 import org.example.homeflow.core.data.repositories.HouseRepository
+import org.example.homeflow.core.data.repositories.MembershipRepository
 import org.example.homeflow.core.model.House
+import org.example.homeflow.core.model.HouseWithMembers
+import org.example.homeflow.core.model.User
+import org.example.homeflow.core.model.withMembers
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class HouseRepositoryImpl(): HouseRepository {
-    private val houses = MutableStateFlow(
-        listOf(House(id = "fsdf",name = "Family Home", members = 4, tasks = 12, code = "pokp"),
-        House(id = "sfdsdf", name = "Apartment 4B", members = 2, tasks = 5, code = "pokm")),
-    )
+class HouseRepositoryImpl(
+    private val dataStore: DataStore<Preferences>,
+    private val membershipRepository: MembershipRepository = MembershipRepositoryImpl()
+) : HouseRepository {
+
+    private val firestore = Firebase.firestore
+
+    // Get logged-in user ID from DataStore
+    private suspend fun getUserId(): String {
+        return Json.decodeFromString<User>(dataStore.data.map { it[DataStoreKeys.USER_KEY] }.first()!!).email
+    }
+
+    private suspend fun getUsername(): String {
+        return Json.decodeFromString<User>(dataStore.data.map { it[DataStoreKeys.USER_KEY] }.first()!!).name
+    }
 
     @OptIn(ExperimentalUuidApi::class)
     override suspend fun createHouse(name: String): String {
+        val userId = getUserId()
         val id = Uuid.random().toString()
-        val house = House(id = id, name = name, members = 0, tasks = 0, code = id.take(6))
-        houses.value += house
-        return id.take(6)
+        val house = House(
+            id = id,
+            name = name,
+            members = 1, // creator is first member
+            tasks = 0,
+            code = id.take(6)
+        )
+
+        // Save house to a central houses collection
+        firestore.collection("houses")
+            .document(id)
+            .set(house)
+
+        // Create membership with "owner" role
+        membershipRepository.createMembership(
+            userId = userId,
+            houseId = id,
+            username = getUsername(),
+            isOwner = true
+        )
+
+        return house.code
     }
 
     override suspend fun deleteHouse(id: String) {
-        houses.value = houses.value.filterNot { it.id == id }
-    }
+        val userId = getUserId()
 
-    override suspend fun joinHouse(code: String, userId: String) {
-        houses.value = houses.value.map { house ->
-            if (house.code == code) house.copy(members = house.members + 1)
-            else house
+        // Verify user is owner
+        val membership = membershipRepository.getMembership(userId, id)
+        if (membership?.isOwner == false) {
+            throw IllegalStateException("Only house owner can delete the house")
         }
+
+        // Delete all memberships for this house
+        val memberships = membershipRepository.getMembershipsByHouse(id)
+        memberships.forEach { membershipRepository.deleteMembership(it.id) }
+
+        // Delete the house
+        firestore.collection("houses")
+            .document(id)
+            .delete()
     }
 
-    override fun getHouses(): Flow<List<House>> {
-        return houses
+    override suspend fun joinHouse(code: String) {
+        val userId = getUserId()
+
+        // Find the house by code
+        val querySnapshot = firestore.collection("houses")
+            .where { "code".equalTo(code) }
+            .get()
+
+        if (querySnapshot.documents.isEmpty()) {
+            throw IllegalArgumentException("House not found with code: $code")
+        }
+
+        val doc = querySnapshot.documents[0]
+        val house = doc.data<House>()
+
+        // Check if user is already a member
+        val existingMembership = membershipRepository.getMembership(userId, house.id)
+        if (existingMembership != null) {
+            throw IllegalStateException("Already a member of this house")
+        }
+
+        // Create membership
+        membershipRepository.createMembership(
+            userId = userId,
+            houseId = house.id,
+            username = getUsername(),
+            isOwner = false
+        )
+
+        // Update member count
+        val memberCount = membershipRepository.getMembershipsByHouse(house.id).size
+        val updatedHouse = house.copy(members = memberCount)
+        firestore.collection("houses")
+            .document(house.id)
+            .set(updatedHouse)
     }
 
     override suspend fun getHouseById(id: String): House {
-        return houses.value.single { it.id == id }
+        val doc = firestore.collection("houses")
+            .document(id)
+            .get()
+
+        return doc.data<House>()
     }
+
+    /*@OptIn(ExperimentalCoroutinesApi::class)
+    override fun getHouses(): Flow<List<House>> = flow {
+        val userId = getUserId()
+
+        // Listen to membership changes
+        membershipRepository.observeMembershipsByUser(userId)
+            .flatMapLatest { memberships ->
+                val houseIds = memberships.map { it.houseId }
+
+                if (houseIds.isEmpty()) {
+                    return@flatMapLatest flowOf(emptyList())
+                }
+
+                // Combine real-time listeners for all houses
+                combine(
+                    houseIds.map { houseId -> observeHouse(houseId) }
+                ) { housesArray ->
+                    housesArray.filterNotNull()
+                }
+            }
+            .collect { emit(it) }
+    }
+*/
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getHousesWithMembers(): Flow<List<HouseWithMembers>> = flow {
+        val userId = getUserId()
+
+        // Listen to membership changes for the current user
+        membershipRepository.observeMembershipsByUser(userId)
+            .flatMapLatest { memberships ->
+                val houseIds = memberships.map { it.houseId }
+
+                if (houseIds.isEmpty()) {
+                    return@flatMapLatest flowOf(emptyList())
+                }
+
+                // Combine real-time listeners for all houses with their members
+                combine(
+                    houseIds.map { houseId -> getHouseWithMembers(houseId) }
+                ) { housesWithMembersArray ->
+                    housesWithMembersArray.toList()
+                }
+            }
+            .collect { emit(it) }
+    }
+
+    override fun getHouseWithMembers(houseId: String): Flow<HouseWithMembers> = flow {
+        // Combine two real-time streams:
+        // 1. House data changes
+        // 2. Membership changes (joins, leaves, role updates)
+        combine(
+            observeHouse(houseId),              // Flow<House?>
+            membershipRepository.observeMembershipsByHouse(houseId)  // Flow<List<Membership>>
+        ) { house, memberships ->
+            // Create HouseWithMembers with current user info
+            house.withMembers(memberships)
+        }.collect { emit(it) }
+    }
+
+    private fun observeHouse(houseId: String) =
+         firestore.collection("houses")
+            .document(houseId)
+            .snapshots
+            .map { it.data<House>() }
+
+
+
 }

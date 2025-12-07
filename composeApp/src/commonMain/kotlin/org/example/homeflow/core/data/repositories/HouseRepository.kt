@@ -2,11 +2,13 @@ package org.example.homeflow.core.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 import org.example.homeflow.core.model.House
+import org.example.homeflow.core.model.HouseWithMembers
 
 interface HouseRepository {
     suspend fun createHouse(name: String): String
     suspend fun deleteHouse(id: String)
-    suspend fun joinHouse(code: String, userId: String)
-    fun getHouses(): Flow<List<House>>
+    suspend fun joinHouse(code: String)
+    fun getHouseWithMembers(houseId: String): Flow<HouseWithMembers>
+    fun getHousesWithMembers(): Flow<List<HouseWithMembers>>
     suspend fun getHouseById(id: String): House
 }

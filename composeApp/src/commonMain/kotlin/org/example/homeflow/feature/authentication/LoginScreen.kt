@@ -6,19 +6,36 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
+import org.example.homeflow.feature.authentication.components.GoogleSignInButton
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel,
     onLogin: () -> Unit,
 ) {
-    Surface() {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        if (uiState.loginSuccess) {
+            onLogin()
+        }
+    }
+
+    Surface {
         Column(
             modifier = Modifier
                 .padding(16.dp)
@@ -27,7 +44,14 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LoginHeader()
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(42.dp))
+            if(uiState.message != null) {
+                Text(text = uiState.message!!, color = MaterialTheme.colorScheme.onBackground)
+                Spacer(modifier = Modifier.height(42.dp))
+            }
+            GoogleSignInButton(
+                onClick = { viewModel.login() },
+            )
         }
     }
 }
@@ -54,6 +78,7 @@ fun LoginHeader() {
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "Home Flow",
             style = MaterialTheme.typography.titleLarge,

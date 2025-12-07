@@ -8,7 +8,10 @@ import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.serialization.Serializable
 
+
+@Serializable
 enum class TaskCategory(val title: String, val icon: ImageVector, val color: Color){
     Groceries("Groceries", Icons.Default.ShoppingCart, Color(0xFF10b981)),
     Repairs("Repairs", Icons.Default.HomeRepairService, Color(0xFFf59e0b)),

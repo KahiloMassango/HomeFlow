@@ -1,9 +1,7 @@
 package org.example.homeflow.feature.home
 
-import HouseRepositoryImpl
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +10,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.HouseRepository
-import org.example.homeflow.core.model.House
 
 class HomeViewModel(
     val houseRepository: HouseRepository
@@ -20,7 +17,7 @@ class HomeViewModel(
     private var _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    val houses = houseRepository.getHouses()
+    val houses = houseRepository.getHousesWithMembers()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun createHouse(name : String) {
@@ -34,7 +31,7 @@ class HomeViewModel(
     fun joinHouse(code : String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            houseRepository.joinHouse(code = code, userId = "")
+            houseRepository.joinHouse(code = code)
             _uiState.update { it.copy(isLoading = false, houseJoined = true) }
         }
     }

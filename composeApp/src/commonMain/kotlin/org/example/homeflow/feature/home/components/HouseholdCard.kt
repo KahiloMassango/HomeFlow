@@ -21,6 +21,7 @@ import org.example.homeflow.core.model.House
 fun HouseholdCard(
     modifier: Modifier = Modifier,
     house: House,
+    isOwner: Boolean,
     onClick: (String) -> Unit
 ) {
     Card(
@@ -57,13 +58,24 @@ fun HouseholdCard(
             Spacer(Modifier.width(14.dp))
 
             Column {
-                Text(
-                    house.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row {
+                    Text(
+                        house.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (isOwner) {
+                        Text(
+                            " *",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
                 Text(
                     "${house.members} members • ${house.tasks} tasks",
                     fontSize = 12.sp,

@@ -1,21 +1,23 @@
 package org.example.homeflow.feature.house
 
-import HouseRepositoryImpl
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.example.homeflow.core.data.TaskRepositoryImpl
 import org.example.homeflow.core.data.repositories.HouseRepository
+import org.example.homeflow.core.data.repositories.TaskRepository
 import org.example.homeflow.core.model.House
+import org.example.homeflow.core.model.TaskCategory
+import org.example.homeflow.core.model.TaskPriority
 
 
 class HouseViewModel(
     val houseId: String,
-    val houseRepository: HouseRepository
+    private val houseRepository: HouseRepository,
+    private val taskRepository: TaskRepository
+
 ): ViewModel() {
-    val taskRepository = TaskRepositoryImpl()
 
     private var _uiState = MutableStateFlow(HouseUiState())
     val uiState: StateFlow<HouseUiState> = _uiState.asStateFlow()
@@ -33,6 +35,29 @@ class HouseViewModel(
             val house = houseRepository.getHouseById(houseId)
             delay(5000)
             _uiState.update { it.copy(isLoading = false, house = house)}
+        }
+    }
+
+    fun createTask(
+        title: String,
+        dueDate: Long,
+        assignedTo: String?,
+        description: String?,
+        category: TaskCategory,
+        priority: TaskPriority
+    ) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            taskRepository.addTask(
+                houseId = houseId,
+                title = title,
+                dueDate = dueDate,
+                assignedTo = assignedTo,
+                description = description,
+                category = category,
+                priority = priority
+            )
+            _uiState.update { it.copy(isLoading = false,)}
         }
     }
 }

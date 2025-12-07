@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.homeflow.core.model.House
+import org.example.homeflow.core.model.HouseWithMembers
 import org.example.homeflow.core.ui.components.HomeFlowButton
 import org.example.homeflow.core.ui.components.HomeFlowOutlinedButton
 import org.example.homeflow.feature.home.components.CreateHouseholdBottomSheet
@@ -76,7 +77,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    houses: List<House>,
+    houses: List<HouseWithMembers>,
     isLoading: Boolean,
     onHouseClick: (String) -> Unit,
     onCreateNew: () -> Unit,
@@ -97,10 +98,11 @@ private fun HomeScreenContent(
                     .padding(horizontal = 16.dp)
                     .fillMaxSize()
             ) {
-                houses.forEach { house ->
+                houses.forEach {
                     HouseholdCard(
                         modifier = Modifier.padding(top = 16.dp),
-                        house = house,
+                        house = it.house,
+                        isOwner = it.isOwner,
                         onClick = { id -> onHouseClick(id) }
                     )
                 }

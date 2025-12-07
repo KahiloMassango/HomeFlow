@@ -14,7 +14,7 @@ plugins {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -35,8 +35,19 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.6.0"))
         }
         commonMain.dependencies {
+            implementation("io.github.sunildhiman90:kmauth-google:0.3.1")
+            implementation("io.github.sunildhiman90:kmauth-google-compose:0.3.1")
+
+            implementation("dev.gitlive:firebase-firestore:2.4.0")
+
+            // DataStore library
+            implementation("androidx.datastore:datastore:1.2.0")
+            // The Preferences DataStore library
+            implementation("androidx.datastore:datastore-preferences:1.2.0")
+
             implementation(libs.material.icons)
             implementation(libs.compose.navigation)
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
