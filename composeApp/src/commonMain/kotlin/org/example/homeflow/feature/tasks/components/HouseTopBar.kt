@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.house.components
+package org.example.homeflow.feature.tasks.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

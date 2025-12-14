@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.house.components
+package org.example.homeflow.feature.tasks.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,7 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.homeflow.core.model.Task
+import org.example.homeflow.core.util.dateFormatter
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun TaskCard(task: Task, onClick: () -> Unit) {
     Card(
@@ -63,7 +66,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = task.dueDate.toString(),
+                        text = dateFormatter(task.dueDate),
                         style = MaterialTheme.typography.bodySmall,
                         color = task.category.color,
                         fontSize = 12.sp

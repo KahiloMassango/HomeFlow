@@ -6,8 +6,8 @@ import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
 
 interface TaskRepository {
-    fun getHouseTasks(houseId: String): Flow<List<Task>>
-    fun deleteTask(id: String, houseId: String)
+    fun getHouseTasksFlow(houseId: String): Flow<List<Task>>
+    suspend fun deleteTask(id: String, houseId: String)
     suspend fun addTask(
         houseId: String,
         title: String,

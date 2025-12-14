@@ -70,7 +70,7 @@ class HouseRepositoryImpl(
         }
 
         // Delete all memberships for this house
-        val memberships = membershipRepository.getMembershipsByHouse(id)
+        val memberships = membershipRepository.getHouseMemberships(id)
         memberships.forEach { membershipRepository.deleteMembership(it.id) }
 
         // Delete the house
@@ -109,7 +109,7 @@ class HouseRepositoryImpl(
         )
 
         // Update member count
-        val memberCount = membershipRepository.getMembershipsByHouse(house.id).size
+        val memberCount = membershipRepository.getHouseMemberships(house.id).size
         val updatedHouse = house.copy(members = memberCount)
         firestore.collection("houses")
             .document(house.id)
@@ -149,7 +149,7 @@ class HouseRepositoryImpl(
 */
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getHousesWithMembers(): Flow<List<HouseWithMembers>> = flow {
+    override fun getHousesWithMembersFlow(): Flow<List<HouseWithMembers>> = flow {
         val userId = getUserId()
 
         // Listen to membership changes for the current user
@@ -163,7 +163,7 @@ class HouseRepositoryImpl(
 
                 // Combine real-time listeners for all houses with their members
                 combine(
-                    houseIds.map { houseId -> getHouseWithMembers(houseId) }
+                    houseIds.map { houseId -> getHouseByIdWithMembersFlow(houseId) }
                 ) { housesWithMembersArray ->
                     housesWithMembersArray.toList()
                 }
@@ -171,7 +171,7 @@ class HouseRepositoryImpl(
             .collect { emit(it) }
     }
 
-    override fun getHouseWithMembers(houseId: String): Flow<HouseWithMembers> = flow {
+    override fun getHouseByIdWithMembersFlow(houseId: String): Flow<HouseWithMembers> = flow {
         // Combine two real-time streams:
         // 1. House data changes
         // 2. Membership changes (joins, leaves, role updates)

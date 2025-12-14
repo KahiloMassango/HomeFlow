@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.house
+package org.example.homeflow.feature.tasks
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.homeflow.feature.house.components.HouseTopBar
-import org.example.homeflow.feature.house.components.TaskCard
-import org.example.homeflow.feature.house.components.TaskFilter
+import org.example.homeflow.feature.tasks.components.HouseTopBar
+import org.example.homeflow.feature.tasks.components.TaskCard
+import org.example.homeflow.feature.tasks.components.TaskFilter
 
 @Composable
 fun HouseScreen(
@@ -37,13 +37,13 @@ fun HouseScreen(
             topBar = {
                 HouseTopBar(
                     houseName = uiState.house?.name ?: "",
-                    tasksToComplete = 4,
+                    tasksToComplete = tasks.size,
                     oNavigateBack = onNavigateBack
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { onAddTask("") },
+                    onClick = { onAddTask(viewModel.houseId) },
                     containerColor = Color(0xFF2196F3),
                     modifier = Modifier.padding(16.dp)
                 ) {

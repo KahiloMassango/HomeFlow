@@ -8,7 +8,7 @@ interface HouseRepository {
     suspend fun createHouse(name: String): String
     suspend fun deleteHouse(id: String)
     suspend fun joinHouse(code: String)
-    fun getHouseWithMembers(houseId: String): Flow<HouseWithMembers>
-    fun getHousesWithMembers(): Flow<List<HouseWithMembers>>
+    fun getHouseByIdWithMembersFlow(houseId: String): Flow<HouseWithMembers>
+    fun getHousesWithMembersFlow(): Flow<List<HouseWithMembers>>
     suspend fun getHouseById(id: String): House
 }

@@ -1,4 +1,4 @@
-package org.example.homeflow.feature.house
+package org.example.homeflow.feature.tasks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,8 +8,6 @@ import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.HouseRepository
 import org.example.homeflow.core.data.repositories.TaskRepository
 import org.example.homeflow.core.model.House
-import org.example.homeflow.core.model.TaskCategory
-import org.example.homeflow.core.model.TaskPriority
 
 
 class HouseViewModel(
@@ -22,7 +20,7 @@ class HouseViewModel(
     private var _uiState = MutableStateFlow(HouseUiState())
     val uiState: StateFlow<HouseUiState> = _uiState.asStateFlow()
 
-    val tasks = taskRepository.getHouseTasks(houseId)
+    val tasks = taskRepository.getHouseTasksFlow(houseId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
@@ -38,28 +36,6 @@ class HouseViewModel(
         }
     }
 
-    fun createTask(
-        title: String,
-        dueDate: Long,
-        assignedTo: String?,
-        description: String?,
-        category: TaskCategory,
-        priority: TaskPriority
-    ) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            taskRepository.addTask(
-                houseId = houseId,
-                title = title,
-                dueDate = dueDate,
-                assignedTo = assignedTo,
-                description = description,
-                category = category,
-                priority = priority
-            )
-            _uiState.update { it.copy(isLoading = false,)}
-        }
-    }
 }
 
 data class HouseUiState(

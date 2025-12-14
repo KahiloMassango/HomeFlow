@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.example.homeflow.core.data.repositories.MembershipRepository
 import org.example.homeflow.core.model.Membership
+import org.example.homeflow.core.model.User
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
@@ -52,7 +53,8 @@ class MembershipRepositoryImpl : MembershipRepository {
             .update("role", newRole)
     }*/
 
-    override suspend fun getMembershipsByHouse(houseId: String): List<Membership> {
+
+    override suspend fun getHouseMemberships(houseId: String): List<Membership> {
         val snapshot = firestore.collection("memberships")
             .where { "houseId".equalTo(houseId) }
             .get()
@@ -60,7 +62,7 @@ class MembershipRepositoryImpl : MembershipRepository {
         return snapshot.documents.map {it.data<Membership>() }
     }
 
-    override suspend fun getMembershipsByUser(userId: String): List<Membership> {
+    override suspend fun getUserMemberships(userId: String): List<Membership> {
         val snapshot = firestore.collection("memberships")
             .where { "userId".equalTo(userId) }
             .get()

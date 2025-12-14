@@ -4,13 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import org.example.homeflow.core.model.Membership
 import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
+import org.example.homeflow.core.ui.components.AppDropdown
 import org.example.homeflow.core.ui.components.AppTextField
 import org.example.homeflow.core.ui.components.HomeFlowButton
 import org.example.homeflow.feature.add_task.components.CategoryAndPriorityContainer
@@ -28,12 +32,15 @@ fun AddTaskScreen(
         description = uiState.description,
         category = uiState.category,
         priority = uiState.priority,
+        assignedTo = uiState.assignedTo,
+        members = uiState.members,
         isLoading = uiState.isLoading,
         onTitleUpdate = { viewModel.updateTitle(it) },
         onDescriptionUpdate = { viewModel.updateDescription(it) },
         onCategoryUpdate = { viewModel.updateCategory(it) },
         onPriorityUpdate = { viewModel.updatePriority(it) },
         onAddTask = { viewModel.createTask() },
+        onAssign = { viewModel.updateAssignment(it) },
         onNavigateBack = onNavigateBack
     )
 }
@@ -45,12 +52,15 @@ private fun AddTaskContent(
     description: String,
     category: TaskCategory,
     priority: TaskPriority,
+    assignedTo: Membership?,
     isLoading: Boolean,
     onTitleUpdate: (String) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onCategoryUpdate: (TaskCategory) -> Unit,
     onPriorityUpdate: (TaskPriority) -> Unit,
+    members: List<Membership>,
     onAddTask: () -> Unit,
+    onAssign: (Membership) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
 
@@ -66,7 +76,7 @@ private fun AddTaskContent(
                         )
                     }
                 },
-                title = { Text("Add Task $title", color = MaterialTheme.colorScheme.onPrimary) },
+                title = { Text("Add Task", color = MaterialTheme.colorScheme.onPrimary) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                 )
@@ -111,6 +121,22 @@ private fun AddTaskContent(
                     onPriorityUpdate = onPriorityUpdate
                 )
                 Spacer(Modifier.height(26.dp))
+                AppDropdown(
+                    modifier = Modifier.weight(1f),
+                    items = members.map { it.username },
+                    selected = assignedTo?.username ?: "",
+                    onSelected = { username ->
+                        onAssign(members.find { membership -> membership.username == username }!!)
+                    },
+                    label = "Assigned to",
+                    borderColor = category.color,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Person,
+                            contentDescription = null
+                        )
+                    },
+                )
 
                 // Outline button
                 HomeFlowButton(

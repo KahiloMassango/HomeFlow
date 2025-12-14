@@ -17,7 +17,7 @@ class HomeViewModel(
     private var _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    val houses = houseRepository.getHousesWithMembers()
+    val houses = houseRepository.getHousesWithMembersFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun createHouse(name : String) {

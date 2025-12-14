@@ -16,6 +16,7 @@ import com.sunildhiman90.kmauth.core.KMAuthInitializer
 import com.sunildhiman90.kmauth.google.KMAuthGoogle.googleAuthManager
 import org.example.homeflow.AppConstants
 import org.example.homeflow.core.data.AuthRepositoryImpl
+import org.example.homeflow.core.data.MembershipRepositoryImpl
 import org.example.homeflow.core.data.TaskRepositoryImpl
 import org.example.homeflow.core.datastore.createPreferencesDataStore
 import org.example.homeflow.core.ui.theme.HomeFlowTheme
@@ -25,8 +26,8 @@ import org.example.homeflow.feature.authentication.LoginScreen
 import org.example.homeflow.feature.authentication.LoginViewModel
 import org.example.homeflow.feature.home.HomeScreen
 import org.example.homeflow.feature.home.HomeViewModel
-import org.example.homeflow.feature.house.HouseScreen
-import org.example.homeflow.feature.house.HouseViewModel
+import org.example.homeflow.feature.tasks.HouseScreen
+import org.example.homeflow.feature.tasks.HouseViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -47,6 +48,7 @@ fun MainApp(
 
     val houseRepository = HouseRepositoryImpl(dataStore = datastore)
     val taskRepository = TaskRepositoryImpl()
+    val membershipRepository = MembershipRepositoryImpl()
     val authRepository = AuthRepositoryImpl(dataStore = datastore, googleAuthManager = googleAuthManager)
     val isLoggedIn by authRepository.isSignedIn.collectAsState(false)
 
@@ -73,7 +75,7 @@ fun MainApp(
 
         composable<AddTaskRoute> {
             val route = it.toRoute<AddTaskRoute>()
-            val vm = viewModel<AddTaskViewModel> { AddTaskViewModel(houseId = route.houseId, taskRepository) }
+            val vm = viewModel<AddTaskViewModel> { AddTaskViewModel(houseId = route.houseId, taskRepository, membershipRepository) }
 
             AddTaskScreen(
                 viewModel = vm,
