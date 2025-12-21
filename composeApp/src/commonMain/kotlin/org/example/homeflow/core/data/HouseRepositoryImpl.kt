@@ -2,6 +2,7 @@ package org.example.homeflow.core.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import co.touchlab.kermit.Logger
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,7 +41,6 @@ class HouseRepositoryImpl(
             id = id,
             name = name,
             members = 1, // creator is first member
-            tasks = 0,
             code = id.take(6)
         )
 

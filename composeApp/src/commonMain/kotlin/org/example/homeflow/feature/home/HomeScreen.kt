@@ -9,13 +9,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.homeflow.core.model.House
 import org.example.homeflow.core.model.HouseWithMembers
 import org.example.homeflow.core.ui.components.HomeFlowButton
 import org.example.homeflow.core.ui.components.HomeFlowOutlinedButton
 import org.example.homeflow.feature.home.components.CreateHouseholdBottomSheet
 import org.example.homeflow.feature.home.components.HomeTopBar
-import org.example.homeflow.feature.home.components.HouseholdCard
+import org.example.homeflow.feature.home.components.HouseCard
 import org.example.homeflow.feature.home.components.JoinHouseholdBottomSheet
 
 @Composable
@@ -99,7 +98,7 @@ private fun HomeScreenContent(
                     .fillMaxSize()
             ) {
                 houses.forEach {
-                    HouseholdCard(
+                    HouseCard(
                         modifier = Modifier.padding(top = 16.dp),
                         house = it.house,
                         isOwner = it.isOwner,

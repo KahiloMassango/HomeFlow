@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import org.example.homeflow.core.model.House
 
 @Composable
-fun HouseholdCard(
+fun HouseCard(
     modifier: Modifier = Modifier,
     house: House,
     isOwner: Boolean,
@@ -61,7 +61,7 @@ fun HouseholdCard(
                 Row {
                     Text(
                         house.name,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -77,7 +77,7 @@ fun HouseholdCard(
                     }
                 }
                 Text(
-                    "${house.members} members • ${house.tasks} tasks",
+                    "${house.members} members",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
                 )

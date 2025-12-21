@@ -47,12 +47,6 @@ class MembershipRepositoryImpl : MembershipRepository {
             .delete()
     }
 
-    /*override suspend fun updateMembershipRole(membershipId: String, newRole: String) {
-        firestore.collection("memberships")
-            .document(membershipId)
-            .update("role", newRole)
-    }*/
-
 
     override suspend fun getHouseMemberships(houseId: String): List<Membership> {
         val snapshot = firestore.collection("memberships")

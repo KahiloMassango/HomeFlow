@@ -10,35 +10,40 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.homeflow.feature.tasks.model.TaskFilter
 
 @Composable
 fun TaskFilter(
     modifier: Modifier = Modifier,
-    filter: String,
-    onFilterChange: (String) -> Unit,
+    totalTasks: Int,
+    todoTotalTasks: Int,
+    doneTasks: Int,
+    currentFilter: TaskFilter,
+    onFilterChange: (TaskFilter) -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         StatCard(
-            count = "5",
+            count = totalTasks.toString(),
             label = "All Tasks",
-            selected = filter == "1",
+            selected = TaskFilter.All == currentFilter,
             modifier = Modifier.weight(1f),
-            onClick = { onFilterChange("1") })
+            onClick = { onFilterChange(TaskFilter.All) })
         StatCard(
-            count = "4",
+            count = todoTotalTasks.toString(),
             label = "To Do",
-            selected = filter == "2",
+            selected = TaskFilter.ToDo == currentFilter,
             modifier = Modifier.weight(1f),
-            onClick = { onFilterChange("2") })
+            onClick = { onFilterChange(TaskFilter.ToDo) })
         StatCard(
-            count = "1",
+            count = doneTasks.toString(),
             label = "Done",
-            selected = filter == "3",
+            selected = TaskFilter.Done == currentFilter,
             modifier = Modifier.weight(1f),
-            onClick = { onFilterChange("3") })
+            onClick = { onFilterChange(TaskFilter.Done) }
+        )
     }
 }
 

@@ -13,9 +13,8 @@ import androidx.compose.ui.unit.sp
 import org.example.homeflow.core.ui.components.BackButton
 
 @Composable
-fun HouseTopBar(
+fun TasksTopBar(
     houseName: String,
-    tasksToComplete: Int,
     oNavigateBack: () -> Unit
 ) {
     Box(
@@ -26,7 +25,7 @@ fun HouseTopBar(
         Column(
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -42,12 +41,6 @@ fun HouseTopBar(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-            Text(
-                "$tasksToComplete tasks to complete",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
-            )
-            Spacer(Modifier.height(12.dp))
         }
     }
 }

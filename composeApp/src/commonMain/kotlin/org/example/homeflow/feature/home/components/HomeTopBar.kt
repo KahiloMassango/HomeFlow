@@ -22,20 +22,19 @@ fun HomeTopBar() {
         Column(
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp),
+                .padding(16.dp),
         ) {
 
             Spacer(Modifier.width(14.dp))
-            Text("Welcome back", color = MaterialTheme.colorScheme.onPrimary, fontSize = 14.sp)
+            Text("Welcome back", color = MaterialTheme.colorScheme.onPrimary, fontSize = 16.sp)
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(18.dp))
             Text(
                 text = "Your Houses",
-                fontSize = 22.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-            Spacer(Modifier.height(8.dp))
         }
     }
 }

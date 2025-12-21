@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.homeflow.feature.tasks.components.HouseTopBar
+import org.example.homeflow.feature.tasks.components.TasksTopBar
 import org.example.homeflow.feature.tasks.components.TaskCard
 import org.example.homeflow.feature.tasks.components.TaskFilter
 
@@ -25,8 +25,6 @@ fun HouseScreen(
     val uiState by viewModel.uiState.collectAsState()
     val tasks by viewModel.tasks.collectAsState()
 
-    var filter by rememberSaveable { mutableStateOf("1") }
-
     if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -35,16 +33,16 @@ fun HouseScreen(
 
         Scaffold(
             topBar = {
-                HouseTopBar(
+                TasksTopBar(
                     houseName = uiState.house?.name ?: "",
-                    tasksToComplete = tasks.size,
                     oNavigateBack = onNavigateBack
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { onAddTask(viewModel.houseId) },
-                    containerColor = Color(0xFF2196F3),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Icon(
@@ -69,8 +67,11 @@ fun HouseScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                     // Stats row
                     TaskFilter(
-                        filter = filter,
-                        onFilterChange = { filter = it },
+                        totalTasks = uiState.totalTasks,
+                        todoTotalTasks =  uiState.todoTotalTasks,
+                        doneTasks =  uiState.doneTasks,
+                        currentFilter = uiState.taskFilter,
+                        onFilterChange = { viewModel.updateFilter(it) },
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

@@ -51,7 +51,7 @@ fun AppDropdown(
                     unfocusedBorderColor = borderColor.copy(alpha = 0.7f)
                 ),
                 modifier = Modifier
-                    .menuAnchor()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
                     .fillMaxWidth()
             )
         }

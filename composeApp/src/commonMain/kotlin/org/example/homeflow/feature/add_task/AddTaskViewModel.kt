@@ -29,7 +29,6 @@ class AddTaskViewModel(
             val members = membershipRepository.getHouseMemberships(houseId)
             _uiState.update { it.copy(members = members) }
         }
-        Logger.d("Houde ID is $houseId")
     }
 
     fun updateTitle(value: String) {
@@ -62,24 +61,24 @@ class AddTaskViewModel(
         }
     }
 
-    fun clearState() {
-        _uiState.update { AddTaskState() }
-    }
-
     fun createTask() {
-        _uiState.update { curr -> curr.copy(isLoading = true) }
-        viewModelScope.launch {
-            taskRepository.addTask(
-                houseId = houseId,
-                title = _uiState.value.title,
-                description = _uiState.value.description,
-                category = _uiState.value.category,
-                priority = _uiState.value.priority,
-                dueDate = _uiState.value.dueDate,
-                assignedTo = _uiState.value.assignedTo?.username
-            )
+        try {
+            _uiState.update { curr -> curr.copy(isLoading = true) }
+            viewModelScope.launch {
+                taskRepository.addTask(
+                    houseId = houseId,
+                    title = _uiState.value.title,
+                    description = _uiState.value.description,
+                    category = _uiState.value.category,
+                    priority = _uiState.value.priority,
+                    dueDate = _uiState.value.dueDate,
+                    assignedTo = _uiState.value.assignedTo?.username
+                )
+            }
+            _uiState.update { curr -> AddTaskState(members = curr.members) }
+        } catch (e: Exception) {
+            Logger.d(e.stackTraceToString())
         }
-        _uiState.update { curr -> curr.copy(isLoading = false) }
     }
 }
 
