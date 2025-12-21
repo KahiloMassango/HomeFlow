@@ -6,6 +6,7 @@ import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.example.homeflow.core.data.repositories.TaskRepository
+import org.example.homeflow.core.model.Membership
 import org.example.homeflow.core.model.Task
 import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
@@ -16,6 +17,14 @@ class TaskRepositoryImpl : TaskRepository {
 
     private val firestore = Firebase.firestore
 
+    override suspend fun getTaskById(taskId: String): Task {
+        val snapshot = firestore.collection("tasks")
+            .where { "id".equalTo(taskId) }
+            .get()
+
+        return snapshot.documents.first().data<Task>()
+    }
+
     override fun getHouseTasksFlow(houseId: String): Flow<List<Task>> =
         firestore.collection("tasks")
             .where { "houseId".equalTo(houseId) }
@@ -23,8 +32,6 @@ class TaskRepositoryImpl : TaskRepository {
             .map { snapshot ->
                 snapshot.documents.map { it.data<Task>() }
             }
-
-
 
     override suspend fun deleteTask(id: String, houseId: String) {
         firestore.collection("tasks")
@@ -64,7 +71,7 @@ class TaskRepositoryImpl : TaskRepository {
         taskId: String,
         houseId: String,
         title: String,
-        dueDate: Long,
+        dueDate: Long?,
         assignedTo: String?,
         description: String?,
         category: TaskCategory,

@@ -13,7 +13,7 @@ import kotlin.collections.emptyList
 import kotlin.collections.filter
 
 
-class HouseViewModel(
+class TasksViewModel(
     val houseId: String,
     private val houseRepository: HouseRepository,
     private val taskRepository: TaskRepository

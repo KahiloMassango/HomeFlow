@@ -12,4 +12,7 @@ object HomeRoute
 data class AddTaskRoute(val houseId: String)
 
 @Serializable
-data class HouseRoute(val id: String)
+data class EditTaskRoute(val houseId: String, val taskId: String)
+
+@Serializable
+data class TasksRoute(val id: String)

@@ -7,6 +7,7 @@ import org.example.homeflow.core.model.TaskPriority
 
 interface TaskRepository {
     fun getHouseTasksFlow(houseId: String): Flow<List<Task>>
+    suspend fun getTaskById(taskId: String): Task
     suspend fun deleteTask(id: String, houseId: String)
     suspend fun addTask(
         houseId: String,
@@ -22,7 +23,7 @@ interface TaskRepository {
         taskId: String,
         houseId: String,
         title: String,
-        dueDate: Long,
+        dueDate: Long?,
         assignedTo: String?,
         description: String?,
         category: TaskCategory,

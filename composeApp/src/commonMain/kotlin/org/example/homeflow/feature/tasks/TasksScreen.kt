@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,9 +16,10 @@ import org.example.homeflow.feature.tasks.components.TaskCard
 import org.example.homeflow.feature.tasks.components.TaskFilter
 
 @Composable
-fun HouseScreen(
-    viewModel: HouseViewModel,
+fun TasksScreen(
+    viewModel: TasksViewModel,
     onAddTask: (String) -> Unit,
+    onEditTask: (String, String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -81,7 +81,9 @@ fun HouseScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(tasks) { task ->
-                            TaskCard(task = task, onClick = {})
+                            TaskCard(task = task, onClick = {
+                                onEditTask(viewModel.houseId, task.id)
+                            })
                         }
                     }
                 }

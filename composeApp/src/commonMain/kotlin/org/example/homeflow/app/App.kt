@@ -24,10 +24,12 @@ import org.example.homeflow.feature.add_task.AddTaskScreen
 import org.example.homeflow.feature.add_task.AddTaskViewModel
 import org.example.homeflow.feature.authentication.LoginScreen
 import org.example.homeflow.feature.authentication.LoginViewModel
+import org.example.homeflow.feature.edit_task.EditTaskScreen
+import org.example.homeflow.feature.edit_task.EditTaskViewModel
 import org.example.homeflow.feature.home.HomeScreen
 import org.example.homeflow.feature.home.HomeViewModel
-import org.example.homeflow.feature.tasks.HouseScreen
-import org.example.homeflow.feature.tasks.HouseViewModel
+import org.example.homeflow.feature.tasks.TasksScreen
+import org.example.homeflow.feature.tasks.TasksViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -69,7 +71,7 @@ fun MainApp(
         composable<HomeRoute> {
             HomeScreen(
                 viewModel = HomeViewModel(houseRepository),
-                onHouseClick = { id -> navController.navigate(HouseRoute(id)) },
+                onHouseClick = { id -> navController.navigate(TasksRoute(id)) },
             )
         }
 
@@ -83,19 +85,29 @@ fun MainApp(
             )
         }
 
-        composable<HouseRoute> {
-            val route = it.toRoute<HouseRoute>()
-            val vm = viewModel<HouseViewModel> {
-                HouseViewModel(
+        composable<TasksRoute> {
+            val route = it.toRoute<TasksRoute>()
+            val vm = viewModel<TasksViewModel> {
+                TasksViewModel(
                     houseId = route.id,
                     houseRepository = houseRepository,
                     taskRepository = taskRepository
                 )
             }
 
-            HouseScreen(
+            TasksScreen(
                 viewModel = vm,
                 onAddTask = { houseId -> navController.navigate(AddTaskRoute(houseId)) },
+                onEditTask = {houseId, taskId -> navController.navigate(EditTaskRoute(houseId, taskId))},
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<EditTaskRoute> {
+            val route = it.toRoute<EditTaskRoute>()
+            val vm = viewModel<EditTaskViewModel> { EditTaskViewModel(houseId = route.houseId, taskId = route.taskId,  taskRepository, membershipRepository) }
+            EditTaskScreen(
+                viewModel = vm,
                 onNavigateBack = { navController.popBackStack() }
             )
         }
