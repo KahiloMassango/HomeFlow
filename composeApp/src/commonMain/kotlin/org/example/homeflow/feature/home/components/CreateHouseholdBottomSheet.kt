@@ -44,7 +44,7 @@ fun CreateHouseholdBottomSheet(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     "Create House",
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.weight(1f))
@@ -55,7 +55,7 @@ fun CreateHouseholdBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            Text("Household Name", fontWeight = FontWeight.Medium, fontSize = 16.sp)
+            Text("House Name", fontWeight = FontWeight.Medium, fontSize = 16.sp)
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -72,7 +72,7 @@ fun CreateHouseholdBottomSheet(
                 modifier = Modifier,
                 icon = Icons.Outlined.Info,
                 title = "After creating",
-                description = "You'll receive an invite code to share with family and roommates"
+                description = "Will be created an invite code to share with family and roommates"
             )
 
             Spacer(Modifier.height(30.dp))
@@ -81,7 +81,7 @@ fun CreateHouseholdBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading && name.isNotEmpty(),
                 onClick = { onCreate(name) },
-                text = "Create a House",
+                text = "Create",
                 isLoading = isLoading
             )
         }

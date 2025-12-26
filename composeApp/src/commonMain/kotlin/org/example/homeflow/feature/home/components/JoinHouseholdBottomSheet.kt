@@ -42,7 +42,7 @@ fun JoinHouseholdBottomSheet(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     "Join House",
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.weight(1f))
@@ -53,13 +53,13 @@ fun JoinHouseholdBottomSheet(
 
             Spacer(Modifier.height(20.dp))
 
-            Text("Household Name", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+            Text("House invite code", fontWeight = FontWeight.Medium, fontSize = 14.sp)
             Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = code,
                 onValueChange = { code = it },
-                placeholder = { Text("ENTER-CODE-HERE") },
+                placeholder = { Text("Enter-code-here") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
