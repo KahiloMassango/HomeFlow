@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.example.homeflow.core.data.repositories.MembershipRepository
 import org.example.homeflow.core.model.Membership
-import org.example.homeflow.core.model.User
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi

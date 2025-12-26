@@ -2,7 +2,6 @@ package org.example.homeflow.core.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 import org.example.homeflow.core.model.Membership
-import org.example.homeflow.core.model.User
 
 interface MembershipRepository {
     suspend fun createMembership(userId: String, houseId: String, username: String): Membership
