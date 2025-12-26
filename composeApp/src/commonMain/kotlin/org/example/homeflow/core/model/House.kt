@@ -8,4 +8,5 @@ data class House(
     val code: String,
     val name: String,
     val members: Int,
+    val ownerId: String
 )

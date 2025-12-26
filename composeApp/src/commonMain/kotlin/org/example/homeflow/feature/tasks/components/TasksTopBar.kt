@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -15,7 +16,9 @@ import org.example.homeflow.core.ui.components.BackButton
 @Composable
 fun TasksTopBar(
     houseName: String,
-    oNavigateBack: () -> Unit
+    houseCode: String,
+    oNavigateBack: () -> Unit,
+    isHouseOwner: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -34,6 +37,10 @@ fun TasksTopBar(
                 BackButton(onClick = oNavigateBack)
                 Text(houseName, color = MaterialTheme.colorScheme.onPrimary, fontSize = 20.sp)
             }
+           if(isHouseOwner) {
+               Spacer(Modifier.height(18.dp))
+               HouseCodeContainer(houseCode)
+           }
             Spacer(Modifier.height(18.dp))
             Text(
                 text = "Tasks",
@@ -45,4 +52,30 @@ fun TasksTopBar(
     }
 }
 
+@Composable
+fun HouseCodeContainer(houseCode: String) {
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.medium)
+            .clip(MaterialTheme.shapes.medium)
+    ) {
+        Row(
+            modifier = Modifier.padding(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = houseCode,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                fontSize = 16.sp,
+            )
+            Text(
+                text = "Copy",
+                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+                fontSize = 12.sp,
+            )
+
+        }
+    }
+}
 

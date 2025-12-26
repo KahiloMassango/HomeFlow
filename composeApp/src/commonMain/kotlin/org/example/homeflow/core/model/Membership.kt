@@ -8,6 +8,5 @@ data class Membership(
     val userId: String,
     val username: String,
     val houseId: String,
-    val isOwner: Boolean,
     val joinedAt: Long
 )

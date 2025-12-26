@@ -34,7 +34,9 @@ fun TasksScreen(
         Scaffold(
             topBar = {
                 TasksTopBar(
-                    houseName = uiState.house?.name ?: "",
+                    houseName = uiState.houseWithMembers?.house?.name ?: "",
+                    isHouseOwner = uiState.houseWithMembers?.isOwner ?: false,
+                    houseCode = uiState.houseWithMembers?.house?.code ?: "",
                     oNavigateBack = onNavigateBack
                 )
             },

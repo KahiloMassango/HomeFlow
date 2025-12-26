@@ -21,14 +21,12 @@ class MembershipRepositoryImpl : MembershipRepository {
         userId: String,
         houseId: String,
         username: String,
-        isOwner: Boolean
     ): Membership {
         val id = Uuid.random().toString()
         val membership = Membership(
             id = id,
             userId = userId,
             houseId = houseId,
-            isOwner = isOwner,
             joinedAt = Clock.System.now().toEpochMilliseconds(),
             username = username
         )

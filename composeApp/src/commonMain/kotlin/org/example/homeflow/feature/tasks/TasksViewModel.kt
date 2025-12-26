@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.HouseRepository
 import org.example.homeflow.core.data.repositories.TaskRepository
-import org.example.homeflow.core.model.House
+import org.example.homeflow.core.model.HouseWithMembers
 import org.example.homeflow.feature.tasks.model.TaskFilter
 import kotlin.collections.emptyList
 import kotlin.collections.filter
@@ -45,9 +45,9 @@ class TasksViewModel(
     fun initialize() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val house = houseRepository.getHouseById(houseId)
+            val house = houseRepository.getHouseByIdWithMembers(houseId)
             delay(5000)
-            _uiState.update { it.copy(isLoading = false, house = house) }
+            _uiState.update { it.copy(isLoading = false, houseWithMembers = house) }
         }
     }
 
@@ -58,7 +58,7 @@ class TasksViewModel(
 }
 
 data class HouseUiState(
-    val house: House? = null,
+    val houseWithMembers: HouseWithMembers? = null,
     val totalTasks: Int = 0,
     val todoTotalTasks: Int = 0,
     val doneTasks: Int = 0,

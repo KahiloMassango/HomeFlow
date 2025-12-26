@@ -14,6 +14,6 @@ fun House.withMembers(memberships: List<Membership>): HouseWithMembers {
         house = this,
         memberCount = memberships.size,
         members = memberships,
-        isOwner = memberships.any { it.isOwner }
+        isOwner = memberships.any { it.userId == ownerId }
     )
 }

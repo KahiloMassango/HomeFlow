@@ -40,7 +40,8 @@ class HouseRepositoryImpl(
         val house = House(
             id = id,
             name = name,
-            members = 1, // creator is first member
+            members = 1,
+            ownerId = userId,
             code = id.take(6)
         )
 
@@ -54,20 +55,12 @@ class HouseRepositoryImpl(
             userId = userId,
             houseId = id,
             username = getUsername(),
-            isOwner = true
         )
 
         return house.code
     }
 
     override suspend fun deleteHouse(id: String) {
-        val userId = getUserId()
-
-        // Verify user is owner
-        val membership = membershipRepository.getMembership(userId, id)
-        if (membership?.isOwner == false) {
-            throw IllegalStateException("Only house owner can delete the house")
-        }
 
         // Delete all memberships for this house
         val memberships = membershipRepository.getHouseMemberships(id)
@@ -105,7 +98,6 @@ class HouseRepositoryImpl(
             userId = userId,
             houseId = house.id,
             username = getUsername(),
-            isOwner = false
         )
 
         // Update member count
@@ -124,29 +116,14 @@ class HouseRepositoryImpl(
         return doc.data<House>()
     }
 
-    /*@OptIn(ExperimentalCoroutinesApi::class)
-    override fun getHouses(): Flow<List<House>> = flow {
-        val userId = getUserId()
+    override suspend fun getHouseByIdWithMembers(houseId: String): HouseWithMembers {
+        val members = membershipRepository.getHouseMemberships(houseId)
+        val house = firestore.collection("houses")
+            .document(houseId)
+            .get().data<House>()
 
-        // Listen to membership changes
-        membershipRepository.observeMembershipsByUser(userId)
-            .flatMapLatest { memberships ->
-                val houseIds = memberships.map { it.houseId }
-
-                if (houseIds.isEmpty()) {
-                    return@flatMapLatest flowOf(emptyList())
-                }
-
-                // Combine real-time listeners for all houses
-                combine(
-                    houseIds.map { houseId -> observeHouse(houseId) }
-                ) { housesArray ->
-                    housesArray.filterNotNull()
-                }
-            }
-            .collect { emit(it) }
+        return house.withMembers(members)
     }
-*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getHousesWithMembersFlow(): Flow<List<HouseWithMembers>> = flow {
