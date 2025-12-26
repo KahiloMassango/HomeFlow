@@ -139,12 +139,12 @@ private fun AddTaskContent(
 
                 // Outline button
                 HomeFlowButton(
+                    isLoading = isLoading,
+                    text = "Add task",
                     onClick = onAddTask,
                     modifier = Modifier
                         .fillMaxWidth()
-                ) {
-                    if (isLoading) CircularProgressIndicator() else Text("Create Task")
-                }
+                )
 
             }
         }

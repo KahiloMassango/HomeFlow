@@ -134,7 +134,7 @@ private fun EditTaskContent(
                         onAssign(members.find { membership -> membership.username == username }!!)
                     },
                     label = "Assigned to",
-                    borderColor = category.color,
+                    borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Person,
@@ -144,11 +144,11 @@ private fun EditTaskContent(
                 )
                 HomeFlowButton(
                     onClick = onUpdateTask,
+                    isLoading = isLoading,
+                    text = "Update task",
                     modifier = Modifier
                         .fillMaxWidth()
-                ) {
-                    if (isLoading) CircularProgressIndicator() else Text("Update Task")
-                }
+                )
             }
         }
     }

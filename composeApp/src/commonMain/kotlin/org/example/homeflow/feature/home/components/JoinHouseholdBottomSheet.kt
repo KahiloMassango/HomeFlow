@@ -79,13 +79,9 @@ fun JoinHouseholdBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading && code.isNotEmpty(),
                 onClick = { onJoin(code) },
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text("Join House")
-                }
-            }
+                text = "Join House",
+                isLoading = isLoading
+            )
 
         }
     }

@@ -68,7 +68,7 @@ fun TaskCard(task: Task, onClick: () -> Unit) {
                     Text(
                         text = dateFormatter(task.dueDate),
                         style = MaterialTheme.typography.bodySmall,
-                        color = task.category.color,
+                        color = task.priority.color,
                         fontSize = 12.sp
                     )
                 }

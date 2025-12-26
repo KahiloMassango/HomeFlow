@@ -81,14 +81,9 @@ fun CreateHouseholdBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading && name.isNotEmpty(),
                 onClick = { onCreate(name) },
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text("Create a House")
-                }
-            }
-
+                text = "Create a House",
+                isLoading = isLoading
+            )
         }
     }
 }

@@ -111,21 +111,21 @@ private fun HomeScreenContent(
                 HomeFlowButton(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    isLoading = isLoading,
                     onClick = onCreateNew,
-                ) {
-                    if (isLoading) CircularProgressIndicator() else Text("Create New Household")
-                }
+                    text = "Create house",
+                )
 
                 Spacer(Modifier.height(14.dp))
 
                 // Outline button
                 HomeFlowOutlinedButton(
                     onClick = onJoinInvite,
+                    text = "Join house with invite code",
+                    isLoading = isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
-                ) {
-                    if (isLoading) CircularProgressIndicator() else Text("Join with Invite Code")
-                }
+                )
             }
         }
     }

@@ -12,9 +12,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,49 +28,66 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeFlowButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    text: String,
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     shape: Shape = RoundedCornerShape(30.dp),
-    enabled: Boolean = true,
-    content: @Composable (RowScope.() -> Unit)
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
         shape = shape,
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) {
+                onClick()
+            }
+        },
         enabled = enabled,
-        content = content,
         colors = ButtonDefaults.buttonColors(
             containerColor = color,
             contentColor = contentColor
         )
-    )
+    ) {
+        if (isLoading) CircularProgressIndicator(
+            modifier = Modifier.size(16.dp), color = contentColor
+        ) else Text(text, color = contentColor)
+    }
 }
 
 @Composable
 fun HomeFlowOutlinedButton(
     modifier: Modifier = Modifier,
+    text: String,
+    isLoading: Boolean = false,
     shape: Shape = RoundedCornerShape(30.dp),
     color: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     enabled: Boolean = true,
     onClick: () -> Unit,
-    content: @Composable (RowScope.() -> Unit)
 ) {
     OutlinedButton(
         modifier = modifier,
         enabled = enabled,
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) {
+                onClick()
+            }
+        },
         shape = shape,
-        content = content,
         border = BorderStroke(1.dp, color),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.Transparent,
             contentColor = contentColor,
         )
-    )
+    ) {
+        if (isLoading) CircularProgressIndicator(
+            modifier = Modifier.size(16.dp), color = contentColor
+        ) else Text(text, color = contentColor)
+    }
 }
+
 
 @Composable
 fun BackButton(
