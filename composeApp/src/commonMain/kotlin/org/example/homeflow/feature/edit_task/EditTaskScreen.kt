@@ -46,8 +46,15 @@ fun EditTaskScreen(
             onDescriptionUpdate = { viewModel.updateDescription(it) },
             onCategoryUpdate = { viewModel.updateCategory(it) },
             onPriorityUpdate = { viewModel.updatePriority(it) },
-            onUpdateTask = { viewModel.updateTask() },
+            onUpdateTask = {
+                viewModel.updateTask()
+                onNavigateBack()
+            },
             onAssign = { viewModel.updateAssignment(it) },
+            onDeleteTask = {
+                viewModel.deleteTask()
+                onNavigateBack()
+            },
             onNavigateBack = onNavigateBack
         )
     }
@@ -68,6 +75,7 @@ private fun EditTaskContent(
     onPriorityUpdate: (TaskPriority) -> Unit,
     members: List<Membership>,
     onUpdateTask: () -> Unit,
+    onDeleteTask: () -> Unit,
     onAssign: (Membership) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -141,6 +149,15 @@ private fun EditTaskContent(
                             contentDescription = null
                         )
                     },
+                )
+                HomeFlowButton(
+                    onClick = onDeleteTask,
+                    isLoading = isLoading,
+                    text = "Delete",
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
                 HomeFlowButton(
                     onClick = onUpdateTask,

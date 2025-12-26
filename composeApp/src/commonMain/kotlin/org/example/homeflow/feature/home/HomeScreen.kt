@@ -1,11 +1,9 @@
 package org.example.homeflow.feature.home
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,6 +19,7 @@ import org.example.homeflow.feature.home.components.JoinHouseholdBottomSheet
 fun HomeScreen(
     viewModel: HomeViewModel,
     onHouseClick: (String) -> Unit,
+    onLogout: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -47,7 +46,11 @@ fun HomeScreen(
         isLoading = uiState.isLoading,
         onHouseClick = { id -> onHouseClick(id) },
         onCreateNew = { showCreateSheet = true },
-        onJoinInvite = { showJoinSheet = true }
+        onJoinInvite = { showJoinSheet = true },
+        onLogout = {
+            viewModel.logout()
+            onLogout()
+        }
     )
 
 
@@ -55,7 +58,6 @@ fun HomeScreen(
         CreateHouseholdBottomSheet(
             isLoading = uiState.isLoading,
             onDismiss = {
-                showCreateSheet = false
                 viewModel.clearHouseCode()
             },
             onCreate = { name ->
@@ -80,11 +82,14 @@ private fun HomeScreenContent(
     isLoading: Boolean,
     onHouseClick: (String) -> Unit,
     onCreateNew: () -> Unit,
-    onJoinInvite: () -> Unit
+    onJoinInvite: () -> Unit,
+    onLogout: () -> Unit
 ) {
 
     Scaffold(
-        topBar = { HomeTopBar() }
+        topBar = { HomeTopBar(
+            onLogout = onLogout
+        ) }
     ) { paddingValues ->
         Surface(
             modifier = Modifier

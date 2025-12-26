@@ -9,10 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.homeflow.core.data.repositories.AuthRepository
 import org.example.homeflow.core.data.repositories.HouseRepository
 
 class HomeViewModel(
-    val houseRepository: HouseRepository
+    private val houseRepository: HouseRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private var _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -46,6 +48,12 @@ class HomeViewModel(
 
     fun clearMessage() {
         _uiState.update { it.copy(message = null) }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            authRepository.logout()
+        }
     }
 }
 

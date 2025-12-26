@@ -120,8 +120,8 @@ class HouseRepositoryImpl(
         val house = firestore.collection("houses")
             .document(houseId)
             .get().data<House>()
-
-        return house.withMembers(members)
+        val userId = getUserId()
+        return house.withMembers(members, userId)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -151,12 +151,13 @@ class HouseRepositoryImpl(
         // Combine two real-time streams:
         // 1. House data changes
         // 2. Membership changes (joins, leaves, role updates)
+        val userId = getUserId()
         combine(
             observeHouse(houseId),              // Flow<House?>
             membershipRepository.observeMembershipsByHouse(houseId)  // Flow<List<Membership>>
         ) { house, memberships ->
             // Create HouseWithMembers with current user info
-            house.withMembers(memberships)
+            house.withMembers(memberships, userId)
         }.collect { emit(it) }
     }
 

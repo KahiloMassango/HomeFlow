@@ -9,11 +9,11 @@ data class HouseWithMembers(
 )
 
 // Extension function for easy conversion
-fun House.withMembers(memberships: List<Membership>): HouseWithMembers {
+fun House.withMembers(memberships: List<Membership>, userId: String): HouseWithMembers {
     return HouseWithMembers(
         house = this,
         memberCount = memberships.size,
         members = memberships,
-        isOwner = memberships.any { it.userId == ownerId }
+        isOwner = userId == this.ownerId
     )
 }

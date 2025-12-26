@@ -106,6 +106,18 @@ class EditTaskViewModel(
             _uiState.update { curr -> curr.copy(isLoading = false) }
         }
     }
+
+    fun deleteTask() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true) }
+                taskRepository.deleteTask(id = taskId, houseId = houseId)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
 }
 
 data class EditTaskState @OptIn(ExperimentalTime::class) constructor(

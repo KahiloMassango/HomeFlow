@@ -37,6 +37,10 @@ fun TasksScreen(
                     houseName = uiState.houseWithMembers?.house?.name ?: "",
                     isHouseOwner = uiState.houseWithMembers?.isOwner ?: false,
                     houseCode = uiState.houseWithMembers?.house?.code ?: "",
+                    onDelete = {
+                        viewModel.deleteHouse()
+                        onNavigateBack()
+                    },
                     oNavigateBack = onNavigateBack
                 )
             },
@@ -70,8 +74,8 @@ fun TasksScreen(
                     // Stats row
                     TaskFilter(
                         totalTasks = uiState.totalTasks,
-                        todoTotalTasks =  uiState.todoTotalTasks,
-                        doneTasks =  uiState.doneTasks,
+                        todoTotalTasks = uiState.todoTotalTasks,
+                        doneTasks = uiState.doneTasks,
                         currentFilter = uiState.taskFilter,
                         onFilterChange = { viewModel.updateFilter(it) },
                     )

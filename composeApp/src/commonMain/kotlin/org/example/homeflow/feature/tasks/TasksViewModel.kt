@@ -51,6 +51,19 @@ class TasksViewModel(
         }
     }
 
+
+    fun deleteHouse() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(isLoading = true) }
+                houseRepository.deleteHouse(houseId)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
     fun updateFilter(filter: TaskFilter) {
         _uiState.update { it.copy(taskFilter = filter) }
     }

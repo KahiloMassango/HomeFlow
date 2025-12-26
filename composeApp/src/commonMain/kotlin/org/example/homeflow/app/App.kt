@@ -69,9 +69,11 @@ fun MainApp(
         }
 
         composable<HomeRoute> {
+            val vm = viewModel<HomeViewModel>{ HomeViewModel(houseRepository, authRepository) }
             HomeScreen(
-                viewModel = HomeViewModel(houseRepository),
+                viewModel = vm,
                 onHouseClick = { id -> navController.navigate(TasksRoute(id)) },
+                onLogout = { navController.popBackStack(route = LoginRoute, inclusive = false) },
             )
         }
 
