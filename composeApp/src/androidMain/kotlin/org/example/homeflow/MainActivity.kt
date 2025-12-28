@@ -10,6 +10,7 @@ import com.google.firebase.FirebaseApp
 import com.sunildhiman90.kmauth.core.KMAuthInitializer
 import com.sunildhiman90.kmauth.core.KMAuthPlatformContext
 import org.example.homeflow.app.App
+import org.example.homeflow.app.initKoin
 import org.example.homeflow.core.datastore.initPreferencesDataStore
 
 class MainActivity : ComponentActivity() {
@@ -19,6 +20,7 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
         initPreferencesDataStore(applicationContext)
+        initKoin()
         setContent {
             KMAuthInitializer.initContext(
                 kmAuthPlatformContext = KMAuthPlatformContext(this)
