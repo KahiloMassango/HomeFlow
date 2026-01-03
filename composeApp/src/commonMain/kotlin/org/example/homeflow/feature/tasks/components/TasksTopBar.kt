@@ -80,16 +80,10 @@ fun HouseCodeContainer(houseCode: String) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = houseCode,
+                text = "House Code: $houseCode",
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontSize = 16.sp,
             )
-            Text(
-                text = "Copy",
-                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
-                fontSize = 12.sp,
-            )
-
         }
     }
 }
