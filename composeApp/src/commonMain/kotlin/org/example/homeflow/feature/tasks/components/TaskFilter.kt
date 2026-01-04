@@ -58,7 +58,7 @@ private fun StatCard(
     Card(
         modifier = modifier.height(70.dp),
         onClick = onClick,
-        elevation = CardDefaults.cardElevation(defaultElevation = if (selected) 0.dp else 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else MaterialTheme.colorScheme.secondary,
             contentColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSecondary

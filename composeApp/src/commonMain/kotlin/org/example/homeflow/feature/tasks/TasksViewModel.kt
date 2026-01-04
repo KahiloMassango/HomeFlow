@@ -2,15 +2,13 @@ package org.example.homeflow.feature.tasks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.HouseRepository
 import org.example.homeflow.core.data.repositories.TaskRepository
+import org.example.homeflow.core.data.util.Result
 import org.example.homeflow.core.model.HouseWithMembers
 import org.example.homeflow.feature.tasks.model.TaskFilter
-import kotlin.collections.emptyList
-import kotlin.collections.filter
 
 
 class TasksViewModel(
@@ -45,27 +43,47 @@ class TasksViewModel(
     fun initialize() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val house = houseRepository.getHouseByIdWithMembers(houseId)
-            delay(5000)
-            _uiState.update { it.copy(isLoading = false, houseWithMembers = house) }
+            when (val result = houseRepository.getHouseByIdWithMembers(houseId)) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, houseWithMembers = result.data) }
+                }
+
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            houseWithMembers = null,
+                            message = "An error occurred"
+                        )
+                    }
+                }
+            }
         }
     }
 
 
     fun deleteHouse() {
         viewModelScope.launch {
-            try {
-                _uiState.update { it.copy(isLoading = true) }
-                houseRepository.deleteHouse(houseId)
-                _uiState.update { it.copy(isLoading = false) }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { it.copy(isLoading = true) }
+            val result = houseRepository.deleteHouse(houseId)
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, message =  "House deleted!") }
+                }
+
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoading = false, message = "An error occurred") }
+                }
             }
         }
     }
 
     fun updateFilter(filter: TaskFilter) {
         _uiState.update { it.copy(taskFilter = filter) }
+    }
+
+    fun clearMessage() {
+        _uiState.update { it.copy(message = null) }
     }
 
 }

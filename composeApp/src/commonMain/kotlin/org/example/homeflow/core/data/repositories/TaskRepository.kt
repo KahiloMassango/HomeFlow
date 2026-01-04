@@ -1,14 +1,15 @@
 package org.example.homeflow.core.data.repositories
 
 import kotlinx.coroutines.flow.Flow
+import org.example.homeflow.core.data.util.Result
 import org.example.homeflow.core.model.Task
 import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
 
 interface TaskRepository {
     fun getHouseTasksFlow(houseId: String): Flow<List<Task>>
-    suspend fun getTaskById(taskId: String): Task
-    suspend fun deleteTask(id: String, houseId: String)
+    suspend fun getTaskById(taskId: String): Result<Task>
+    suspend fun deleteTask(id: String, houseId: String): Result<Unit>
     suspend fun addTask(
         houseId: String,
         title: String,
@@ -17,7 +18,7 @@ interface TaskRepository {
         description: String?,
         category: TaskCategory,
         priority: TaskPriority,
-    )
+    ): Result<Unit>
 
     suspend fun updateTask(
         taskId: String,
@@ -28,6 +29,6 @@ interface TaskRepository {
         description: String?,
         category: TaskCategory,
         priority: TaskPriority
-    )
+    ): Result<Unit>
 
 }

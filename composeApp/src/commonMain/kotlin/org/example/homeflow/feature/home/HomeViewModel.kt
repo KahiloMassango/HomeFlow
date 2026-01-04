@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.AuthRepository
 import org.example.homeflow.core.data.repositories.HouseRepository
+import org.example.homeflow.core.data.util.Result
 
 class HomeViewModel(
     private val houseRepository: HouseRepository,
@@ -25,25 +26,36 @@ class HomeViewModel(
     fun createHouse(name : String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val houseCode = houseRepository.createHouse(name)
-            _uiState.update { it.copy(isLoading = false, houseCode = houseCode, houseCreated = true) }
+            when (val result = houseRepository.createHouse(name)) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, houseCode = result.data) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(message = "An error occurred", isLoading = false) }
+                }
+            }
+
         }
     }
 
     fun joinHouse(code : String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            houseRepository.joinHouse(code = code)
-            _uiState.update { it.copy(isLoading = false, houseJoined = true) }
+            val result = houseRepository.joinHouse(code = code)
+
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(message = "An error occurred", isLoading = false) }
+                }
+            }
         }
     }
 
     fun clearHouseCode() {
         _uiState.update { it.copy(houseCode = null) }
-    }
-
-    fun clearHouseCreatedAndJoined() {
-        _uiState.update { it.copy(houseJoined = false, houseCreated = false) }
     }
 
     fun clearMessage() {
@@ -59,8 +71,6 @@ class HomeViewModel(
 
 data class HomeUiState(
     val isLoading: Boolean = false,
-    val houseCreated: Boolean = false,
-    val houseJoined: Boolean = false,
     val message: String? = null,
     val houseCode: String? = null
 )

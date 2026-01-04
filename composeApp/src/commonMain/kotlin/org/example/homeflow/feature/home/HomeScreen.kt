@@ -3,6 +3,9 @@ package org.example.homeflow.feature.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,21 +27,29 @@ fun HomeScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val houses by viewModel.houses.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var showCreateSheet by remember { mutableStateOf(false) }
     var showJoinSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
-        if (uiState.houseCreated) {
+        if (uiState.message != null) {
             showCreateSheet = false
-            viewModel.clearHouseCreatedAndJoined()
         }
 
-        if (uiState.houseJoined) {
+        if (uiState.message != null) {
             showJoinSheet = false
-            viewModel.clearHouseCreatedAndJoined()
         }
 
+        if (uiState.message != null) {
+            uiState.message?.let { message ->
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+            }
+            viewModel.clearMessage()
+        }
     }
 
     HomeScreenContent(
@@ -47,6 +58,7 @@ fun HomeScreen(
         onHouseClick = { id -> onHouseClick(id) },
         onCreateNew = { showCreateSheet = true },
         onJoinInvite = { showJoinSheet = true },
+        snackbarHostState = snackbarHostState,
         onLogout = {
             viewModel.logout()
             onLogout()
@@ -79,6 +91,7 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     houses: List<HouseWithMembers>,
+    snackbarHostState: SnackbarHostState,
     isLoading: Boolean,
     onHouseClick: (String) -> Unit,
     onCreateNew: () -> Unit,
@@ -87,6 +100,7 @@ private fun HomeScreenContent(
 ) {
 
     Scaffold(
+        snackbarHost = {  SnackbarHost(hostState = snackbarHostState) },
         topBar = { HomeTopBar(
             onLogout = onLogout
         ) }

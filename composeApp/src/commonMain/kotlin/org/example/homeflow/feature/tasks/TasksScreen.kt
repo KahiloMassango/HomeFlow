@@ -24,6 +24,19 @@ fun TasksScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val tasks by viewModel.tasks.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState) {
+        if (uiState.message != null) {
+            uiState.message?.let { message ->
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+            }
+            viewModel.clearMessage()
+        }
+    }
 
     if (uiState.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -32,6 +45,7 @@ fun TasksScreen(
     } else {
 
         Scaffold(
+            snackbarHost = {  SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 TasksTopBar(
                     houseName = uiState.houseWithMembers?.house?.name ?: "",
@@ -97,7 +111,6 @@ fun TasksScreen(
         }
     }
 }
-
 
 
 

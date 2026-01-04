@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.example.homeflow.core.data.util.Result
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,31 +28,31 @@ class EditTaskViewModel(
     init {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingTask = true) }
-            try {
-                // Load members
-                val members = membershipRepository.getHouseMemberships(houseId)
+            val members = membershipRepository.getHouseMemberships(houseId)
+            when (val taskResult = taskRepository.getTaskById(taskId)) {
+                is Result.Success -> {
+                    val task = taskResult.data
+                    val assignedMember = members.find { it.username == task.assignedTo }
 
-                // Load existing task
-                val task = taskRepository.getTaskById(taskId)
-                // Find the assigned member
-                val assignedMember = members.find { it.username == task.assignedTo }
-
-                _uiState.update {
-                    EditTaskState(
-                        members = members,
-                        title = task.title,
-                        description = task.description,
-                        category = task.category,
-                        priority = task.priority,
-                        assignedTo = assignedMember,
-                        dueDate = task.dueDate,
-                        isLoadingTask = false
-                    )
+                    _uiState.update {
+                        EditTaskState(
+                            members = members,
+                            title = task.title,
+                            description = task.description,
+                            category = task.category,
+                            priority = task.priority,
+                            assignedTo = assignedMember,
+                            dueDate = task.dueDate,
+                            isLoadingTask = false
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                Logger.d(e.stackTraceToString())
-                _uiState.update { it.copy(isLoadingTask = false) }
+
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoadingTask = false, members = members,message = "An error occurred") }
+                }
             }
+
         }
     }
 
@@ -85,36 +86,49 @@ class EditTaskViewModel(
         }
     }
 
+    fun clearMessage() {
+        _uiState.update { currentState -> currentState.copy(message = null) }
+    }
+
     fun updateTask() {
-        try {
+        viewModelScope.launch {
             _uiState.update { curr -> curr.copy(isLoading = true) }
-            viewModelScope.launch {
-                taskRepository.updateTask(
-                    taskId = taskId,
-                    houseId = houseId,
-                    title = _uiState.value.title,
-                    description = _uiState.value.description,
-                    category = _uiState.value.category,
-                    priority = _uiState.value.priority,
-                    dueDate = _uiState.value.dueDate,
-                    assignedTo = _uiState.value.assignedTo?.username
-                )
-                _uiState.update { curr -> curr.copy(isLoading = false) }
+            val result = taskRepository.updateTask(
+                taskId = taskId,
+                houseId = houseId,
+                title = _uiState.value.title,
+                description = _uiState.value.description,
+                category = _uiState.value.category,
+                priority = _uiState.value.priority,
+                dueDate = _uiState.value.dueDate,
+                assignedTo = _uiState.value.assignedTo?.username
+            )
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { curr -> curr.copy(isLoading = false, message = "Task updated") }
+                }
+
+                is Result.Error -> {
+                    _uiState.update { curr -> curr.copy(isLoading = false, message = "An error occurred") }
+                }
             }
-        } catch (e: Exception) {
-            Logger.d(e.stackTraceToString())
-            _uiState.update { curr -> curr.copy(isLoading = false) }
+
         }
+
     }
 
     fun deleteTask() {
         viewModelScope.launch {
-            try {
-                _uiState.update { it.copy(isLoading = true) }
-                taskRepository.deleteTask(id = taskId, houseId = houseId)
-                _uiState.update { it.copy(isLoading = false) }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { it.copy(isLoading = true) }
+            val result = taskRepository.deleteTask(id = taskId, houseId = houseId)
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, message = "Task deleted") }
+                }
+
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoading = false, message = "An error occurred") }
+                }
             }
         }
     }
@@ -129,5 +143,6 @@ data class EditTaskState @OptIn(ExperimentalTime::class) constructor(
     val isLoading: Boolean = false,
     val isLoadingTask: Boolean = false,
     val assignedTo: Membership? = null,
-    val dueDate: Long? = null
+    val dueDate: Long? = null,
+    val message: String? = null
 )

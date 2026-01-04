@@ -91,7 +91,7 @@ fun MainApp(
 
         composable<EditTaskRoute> {
             val route = it.toRoute<EditTaskRoute>()
-            val vm = koinViewModel<EditTaskViewModel>(parameters = { parametersOf(route.taskId) })
+            val vm = koinViewModel<EditTaskViewModel>(parameters = { parametersOf(route.houseId, route.taskId) })
             EditTaskScreen(
                 viewModel = vm,
                 onNavigateBack = { navController.popBackStack() }

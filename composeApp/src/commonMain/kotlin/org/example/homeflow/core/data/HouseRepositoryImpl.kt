@@ -2,6 +2,7 @@ package org.example.homeflow.core.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import co.touchlab.kermit.Logger
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.serialization.json.Json
 import org.example.homeflow.core.data.repositories.HouseRepository
 import org.example.homeflow.core.data.repositories.MembershipRepository
+import org.example.homeflow.core.data.util.Result
 import org.example.homeflow.core.model.House
 import org.example.homeflow.core.model.HouseWithMembers
 import org.example.homeflow.core.model.User
@@ -33,95 +35,119 @@ class HouseRepositoryImpl(
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    override suspend fun createHouse(name: String): String {
-        val userId = getUserId()
-        val id = Uuid.random().toString()
-        val house = House(
-            id = id,
-            name = name,
-            members = 1,
-            ownerId = userId,
-            code = id.take(6)
-        )
+    override suspend fun createHouse(name: String): Result<String> {
+        try {
+            val userId = getUserId()
+            val id = Uuid.random().toString()
+            val house = House(
+                id = id,
+                name = name,
+                members = 1,
+                ownerId = userId,
+                code = id.take(6)
+            )
 
-        // Save house to a central houses collection
-        firestore.collection("houses")
-            .document(id)
-            .set(house)
+            // Save house to a central houses collection
+            firestore.collection("houses")
+                .document(id)
+                .set(house)
 
-        // Create membership with "owner" role
-        membershipRepository.createMembership(
-            userId = userId,
-            houseId = id,
-            username = getUsername(),
-        )
+            // Create membership with "owner" role
+            membershipRepository.createMembership(
+                userId = userId,
+                houseId = id,
+                username = getUsername(),
+            )
 
-        return house.code
-    }
 
-    override suspend fun deleteHouse(id: String) {
-
-        // Delete all memberships for this house
-        val memberships = membershipRepository.getHouseMemberships(id)
-        memberships.forEach { membershipRepository.deleteMembership(it.id) }
-
-        // Delete the house
-        firestore.collection("houses")
-            .document(id)
-            .delete()
-    }
-
-    override suspend fun joinHouse(code: String) {
-        val userId = getUserId()
-
-        // Find the house by code
-        val querySnapshot = firestore.collection("houses")
-            .where { "code".equalTo(code) }
-            .get()
-
-        if (querySnapshot.documents.isEmpty()) {
-            throw IllegalArgumentException("House not found with code: $code")
+           return Result.Success("success")
+        } catch (e: Exception) {
+            Logger.d(e.stackTraceToString())
+            return Result.Error()
         }
+    }
 
-        val doc = querySnapshot.documents[0]
-        val house = doc.data<House>()
+    override suspend fun deleteHouse(id: String): Result<Unit> {
+        try {
+            // Delete all memberships for this house
+            val memberships = membershipRepository.getHouseMemberships(id)
+            memberships.forEach { membershipRepository.deleteMembership(it.id) }
 
-        // Check if user is already a member
-        val existingMembership = membershipRepository.getMembership(userId, house.id)
-        if (existingMembership != null) {
-            throw IllegalStateException("Already a member of this house")
+            // Delete the house
+            firestore.collection("houses")
+                .document(id)
+                .delete()
+            return Result.Success(Unit)
+
+        } catch (e: Exception) {
+            return Result.Error()
         }
-
-        // Create membership
-        membershipRepository.createMembership(
-            userId = userId,
-            houseId = house.id,
-            username = getUsername(),
-        )
-
-        // Update member count
-        val memberCount = membershipRepository.getHouseMemberships(house.id).size
-        val updatedHouse = house.copy(members = memberCount)
-        firestore.collection("houses")
-            .document(house.id)
-            .set(updatedHouse)
     }
 
-    override suspend fun getHouseById(id: String): House {
-        val doc = firestore.collection("houses")
-            .document(id)
-            .get()
+    override suspend fun joinHouse(code: String): Result<Unit> {
+        try {
+            val userId = getUserId()
 
-        return doc.data<House>()
+            // Find the house by code
+            val querySnapshot = firestore.collection("houses")
+                .where { "code".equalTo(code) }
+                .get()
+
+            if (querySnapshot.documents.isEmpty()) {
+                throw IllegalArgumentException("House not found with code: $code")
+            }
+
+            val doc = querySnapshot.documents[0]
+            val house = doc.data<House>()
+
+            // Check if user is already a member
+            val existingMembership = membershipRepository.getMembership(userId, house.id)
+            if (existingMembership != null) {
+                throw IllegalStateException("Already a member of this house")
+            }
+
+            // Create membership
+            membershipRepository.createMembership(
+                userId = userId,
+                houseId = house.id,
+                username = getUsername(),
+            )
+
+            // Update member count
+            val memberCount = membershipRepository.getHouseMemberships(house.id).size
+            val updatedHouse = house.copy(members = memberCount)
+            firestore.collection("houses")
+                .document(house.id)
+                .set(updatedHouse)
+            return Result.Success(Unit)
+        } catch (e: Exception) {
+            return Result.Error()
+        }
     }
 
-    override suspend fun getHouseByIdWithMembers(houseId: String): HouseWithMembers {
-        val members = membershipRepository.getHouseMemberships(houseId)
-        val house = firestore.collection("houses")
-            .document(houseId)
-            .get().data<House>()
-        val userId = getUserId()
-        return house.withMembers(members, userId)
+    override suspend fun getHouseById(id: String): Result<House> {
+        try {
+            val doc = firestore.collection("houses")
+                .document(id)
+                .get()
+
+            return Result.Success(doc.data<House>())
+        } catch (e: Exception) {
+            return Result.Error()
+        }
+    }
+
+    override suspend fun getHouseByIdWithMembers(houseId: String): Result<HouseWithMembers> {
+        try {
+            val members = membershipRepository.getHouseMemberships(houseId)
+            val house = firestore.collection("houses")
+                .document(houseId)
+                .get().data<House>()
+            val userId = getUserId()
+            return Result.Success(house.withMembers(members, userId))
+        } catch (e: Exception) {
+            return Result.Error()
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

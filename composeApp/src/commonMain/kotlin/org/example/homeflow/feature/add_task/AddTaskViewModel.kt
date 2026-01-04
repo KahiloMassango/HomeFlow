@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.homeflow.core.data.repositories.MembershipRepository
 import org.example.homeflow.core.data.repositories.TaskRepository
+import org.example.homeflow.core.data.util.Result
 import org.example.homeflow.core.model.Membership
 import org.example.homeflow.core.model.TaskCategory
 import org.example.homeflow.core.model.TaskPriority
@@ -62,23 +63,37 @@ class AddTaskViewModel(
     }
 
     fun createTask() {
-        try {
+        viewModelScope.launch {
             _uiState.update { curr -> curr.copy(isLoading = true) }
-            viewModelScope.launch {
-                taskRepository.addTask(
-                    houseId = houseId,
-                    title = _uiState.value.title,
-                    description = _uiState.value.description,
-                    category = _uiState.value.category,
-                    priority = _uiState.value.priority,
-                    dueDate = _uiState.value.dueDate,
-                    assignedTo = _uiState.value.assignedTo?.username
-                )
+            val result = taskRepository.addTask(
+                houseId = houseId,
+                title = _uiState.value.title,
+                description = _uiState.value.description,
+                category = _uiState.value.category,
+                priority = _uiState.value.priority,
+                dueDate = _uiState.value.dueDate,
+                assignedTo = _uiState.value.assignedTo?.username
+            )
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { curr ->
+                        AddTaskState(
+                            members = curr.members,
+                            message = "Tasks added successfully"
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _uiState.update { curr -> curr.copy(isLoading = false, message = "Error adding task") }
+                }
             }
-            _uiState.update { curr -> AddTaskState(members = curr.members) }
-        } catch (e: Exception) {
-            Logger.d(e.stackTraceToString())
         }
+
+    }
+
+    fun clearMessage() {
+        _uiState.update { currentState -> currentState.copy(message = null) }
     }
 }
 
@@ -90,5 +105,6 @@ data class AddTaskState @OptIn(ExperimentalTime::class) constructor(
     val priority: TaskPriority = TaskPriority.Low,
     val isLoading: Boolean = false,
     val assignedTo: Membership? = null,
-    val dueDate: Long = Clock.System.now().toEpochMilliseconds()
+    val dueDate: Long = Clock.System.now().toEpochMilliseconds(),
+    val message: String? = null
 )

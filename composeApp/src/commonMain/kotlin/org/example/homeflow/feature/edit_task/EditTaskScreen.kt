@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,20 @@ fun EditTaskScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState) {
+        if (uiState.message != null) {
+            uiState.message?.let { message ->
+                snackbarHostState.showSnackbar(
+                    message = message,
+                    duration = SnackbarDuration.Short
+                )
+            }
+            viewModel.clearMessage()
+        }
+    }
+
     if (uiState.isLoadingTask) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -35,6 +51,7 @@ fun EditTaskScreen(
         }
     } else {
         EditTaskContent(
+            snackbarHostState = snackbarHostState,
             title = uiState.title,
             description = uiState.description,
             category = uiState.category,
@@ -69,6 +86,7 @@ private fun EditTaskContent(
     priority: TaskPriority,
     assignedTo: Membership?,
     isLoading: Boolean,
+    snackbarHostState: SnackbarHostState,
     onTitleUpdate: (String) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onCategoryUpdate: (TaskCategory) -> Unit,
@@ -80,6 +98,7 @@ private fun EditTaskContent(
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(
+        snackbarHost = {  SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -135,7 +154,6 @@ private fun EditTaskContent(
                 )
                 Spacer(Modifier.height(26.dp))
                 AppDropdown(
-                    modifier = Modifier.weight(1f),
                     items = members.map { it.username },
                     selected = assignedTo?.username ?: "",
                     onSelected = { username ->
@@ -150,6 +168,7 @@ private fun EditTaskContent(
                         )
                     },
                 )
+                Spacer(Modifier.weight(1f))
                 HomeFlowButton(
                     onClick = onDeleteTask,
                     isLoading = isLoading,

@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.homeflow.core.model.Membership
@@ -26,8 +28,21 @@ fun AddTaskScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState) {
+        uiState.message?.let { message ->
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+            viewModel.clearMessage()
+        }
+    }
+
     AddTaskContent(
         title = uiState.title,
+        snackBarHostState = snackbarHostState,
         description = uiState.description,
         category = uiState.category,
         priority = uiState.priority,
@@ -53,6 +68,7 @@ private fun AddTaskContent(
     priority: TaskPriority,
     assignedTo: Membership?,
     isLoading: Boolean,
+    snackBarHostState: SnackbarHostState,
     onTitleUpdate: (String) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onCategoryUpdate: (TaskCategory) -> Unit,
@@ -64,6 +80,7 @@ private fun AddTaskContent(
 ) {
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -121,7 +138,6 @@ private fun AddTaskContent(
                 )
                 Spacer(Modifier.height(26.dp))
                 AppDropdown(
-                    modifier = Modifier.weight(1f),
                     items = members.map { it.username },
                     selected = assignedTo?.username ?: "",
                     onSelected = { username ->
@@ -136,7 +152,7 @@ private fun AddTaskContent(
                         )
                     },
                 )
-
+                Spacer(Modifier.weight(1f))
                 // Outline button
                 HomeFlowButton(
                     isLoading = isLoading,
