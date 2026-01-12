@@ -1,35 +1,62 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# HomeFlow
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+HomeFlow is a collaborative household management app designed to solve a common problem: coordinating tasks, chores, and responsibilities among people who share a house, whether that's family members, roommates, or housemates.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Cross-platform application built using **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**. It allows users to manage their home workflows efficiently, targeting **Android**, **iOS** platforms from a single shared codebase.
 
-### Build and Run Android Application
+## 🎥 Video Demonstration
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+<!-- Place your video demonstration link below -->
+[Watch the Demo Video Here](https://drive.google.com/file/d/1wMCc6W0F1CJspLtr_XYa8odZFkyhluqB/view?usp=sharing)
 
-### Build and Run iOS Application
+## 🛠 Technologies Used
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+This project leverages a modern technology stack to ensure performance, scalability, and maximum code sharing:
 
----
+### Core
+*   **[Kotlin](https://kotlinlang.org/)**: The primary programming language used for the entire project.
+*   **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)**: Enables sharing logic across Android, iOS, and Desktop.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### UI & UX
+*   **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)**: A declarative UI framework for sharing UIs across platforms.
+*   **Material Design 3**: The design system used for the application's UI components.
+
+### Architecture & State Management
+*   **MVVM**: The application follows the Model-View-ViewModel architectural pattern.
+*   **[Koin](https://insert-koin.io/)**: A pragmatic lightweight dependency injection framework for Kotlin.
+
+### Backend & Data
+*   **[Firebase Firestore](https://firebase.google.com/docs/firestore)**: Used as the cloud database (via `dev.gitlive:firebase-firestore`).
+*   **[DataStore](https://developer.android.com/topic/libraries/architecture/datastore)**: Used for storing key-value pairs (Preferences) locally.
+
+### Authentication
+*   **Google Authentication**: Implemented using `kmauth-google` for cross-platform support.
+
+### Libraries & Utilities
+*   **[Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)**: For JSON serialization and deserialization.
+*   **[Kotlinx Datetime](https://github.com/Kotlin/kotlinx-datetime)**: For Date and Time manipulation.
+*   **Navigation Compose**: For handling navigation within the Compose app.
+
+## 📂 Project Structure
+
+*   `composeApp`: The main module containing the shared code.
+    *   `commonMain`: Code shared across all platforms.
+    *   `androidMain`, `iosMain`, `jvmMain`: Platform-specific code and configurations.
+*   `iosApp`: The entry point for the iOS application (Xcode project).
+
+## 🚀 Build & Run
+
+### Android
+To run the Android application:
+```bash
+./gradlew :composeApp:installDebug
+```
+
+### iOS
+To run the iOS application, open `iosApp/iosApp.xcodeproj` in Xcode or run via Android Studio if configured.
+
+### Desktop (JVM)
+To run the desktop application (if configured):
+```bash
+./gradlew :composeApp:run
+```
