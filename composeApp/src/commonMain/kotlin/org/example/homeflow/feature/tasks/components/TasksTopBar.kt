@@ -3,6 +3,7 @@ package org.example.homeflow.feature.tasks.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,7 @@ fun TasksTopBar(
     houseCode: String,
     isHouseOwner: Boolean,
     onDelete: () -> Unit,
+    onLeaveHouse: () -> Unit,
     oNavigateBack: () -> Unit,
 ) {
     Box(
@@ -48,6 +50,14 @@ fun TasksTopBar(
                             imageVector = Icons.Default.Delete,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { onLeaveHouse() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }

@@ -38,10 +38,20 @@ class MembershipRepositoryImpl : MembershipRepository {
         return membership
     }
 
-    override suspend fun deleteMembership(membershipId: String) {
+    override suspend fun deleteMembership(houseId: String) {
         firestore.collection("memberships")
-            .document(membershipId)
+            .document(houseId)
             .delete()
+    }
+
+    override suspend fun deleteUserMembership(userId: String, houseId: String) {
+        val membership = firestore.collection("memberships")
+            .where { "houseId".equalTo(houseId).and("userId".equalTo(userId) ) }
+            .get()
+            .documents[0]
+            .data<Membership>()
+
+        deleteMembership(membership.id)
     }
 
 

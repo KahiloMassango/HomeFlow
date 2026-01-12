@@ -14,7 +14,7 @@ import org.example.homeflow.feature.tasks.model.TaskFilter
 class TasksViewModel(
     val houseId: String,
     private val houseRepository: HouseRepository,
-    private val taskRepository: TaskRepository
+    taskRepository: TaskRepository
 
 ) : ViewModel() {
 
@@ -82,6 +82,20 @@ class TasksViewModel(
         _uiState.update { it.copy(taskFilter = filter) }
     }
 
+    fun leaveHouse() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            val result = houseRepository.leaveHouse(houseId)
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, message = "Leave successful!") }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(isLoading = false, message = "An error occurred") }
+                }
+            }
+        }
+    }
     fun clearMessage() {
         _uiState.update { it.copy(message = null) }
     }

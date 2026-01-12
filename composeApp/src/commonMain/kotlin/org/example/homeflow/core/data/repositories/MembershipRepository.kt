@@ -5,7 +5,8 @@ import org.example.homeflow.core.model.Membership
 
 interface MembershipRepository {
     suspend fun createMembership(userId: String, houseId: String, username: String): Membership
-    suspend fun deleteMembership(membershipId: String)
+    suspend fun deleteMembership(houseId: String)
+    suspend fun deleteUserMembership(userId: String, houseId: String)
     //suspend fun updateMembershipRole(membershipId: String, newRole: String)
     suspend fun getHouseMemberships(houseId: String): List<Membership>
     suspend fun getUserMemberships(userId: String): List<Membership>

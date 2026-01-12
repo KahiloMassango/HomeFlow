@@ -51,6 +51,10 @@ fun TasksScreen(
                     houseName = uiState.houseWithMembers?.house?.name ?: "",
                     isHouseOwner = uiState.houseWithMembers?.isOwner ?: false,
                     houseCode = uiState.houseWithMembers?.house?.code ?: "",
+                    onLeaveHouse = {
+                        viewModel.leaveHouse()
+                        onNavigateBack()
+                                   },
                     onDelete = {
                         viewModel.deleteHouse()
                         onNavigateBack()

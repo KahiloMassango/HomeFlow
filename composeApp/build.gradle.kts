@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -9,6 +8,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     kotlin("plugin.serialization")
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 kotlin {
@@ -28,6 +28,20 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
+    }
+
+    cocoapods {
+        summary = "Compose Multiplatform App"
+        homepage = "https://example.com"
+        ios.deploymentTarget = "14.0"
+        version = "1.16.2"
+        framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+
+        pod("FirebaseCore")
+        pod("FirebaseFirestore")
     }
 
     sourceSets {
@@ -69,10 +83,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-        }
     }
 }
 
@@ -105,16 +115,4 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "org.example.homeflow.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.example.homeflow.app"
-            packageVersion = "1.0.0"
-        }
-    }
 }

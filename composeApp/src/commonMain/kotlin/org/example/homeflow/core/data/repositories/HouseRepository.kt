@@ -12,4 +12,7 @@ interface HouseRepository {
     suspend fun getHouseByIdWithMembers(houseId: String): Result<HouseWithMembers>
     fun getHousesWithMembersFlow(): Flow<List<HouseWithMembers>>
     suspend fun getHouseById(id: String): Result<House>
+
+    suspend fun leaveHouse(houseId: String): Result<Unit>
+
 }

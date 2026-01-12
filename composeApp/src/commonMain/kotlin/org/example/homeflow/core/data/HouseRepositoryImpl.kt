@@ -150,6 +150,15 @@ class HouseRepositoryImpl(
         }
     }
 
+    override suspend fun leaveHouse(houseId: String): Result<Unit> {
+        try {
+            membershipRepository.deleteUserMembership(userId = getUserId(), houseId = houseId)
+            return Result.Success(Unit)
+        }catch (e: Exception) {
+            return Result.Error()
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getHousesWithMembersFlow(): Flow<List<HouseWithMembers>> = flow {
         val userId = getUserId()
